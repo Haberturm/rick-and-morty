@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="character"
+            type="com.haberturm.rickandmorty.entities.CharacterUi" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="@color/light_grey_background"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/small_margin"
+            android:orientation="horizontal">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageView"
+                android:layout_width="@dimen/character_image_size"
+                android:layout_height="@dimen/character_image_size"
+                app:shapeAppearanceOverlay="@style/round_image_view"
+                app:strokeColor="@color/purple_200"
+                app:strokeWidth="1dp"
+                android:scaleType="centerCrop"
+                app:imageUrl="@{character.image}"
+                tools:background="@color/black" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/default_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{character.name}"
+                    android:textColor="@color/black"
+                    tools:text="Rick Sanchez" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{character.species + ',' + ' ' + character.gender + ',' + ' ' + character.status}"
+                    tools:text="Human, male, alive" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</layout>
