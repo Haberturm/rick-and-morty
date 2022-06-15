@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentCharactersMainBinding
-import com.haberturm.rickandmorty.presentation.decorators.MarginDecorator
+import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 
 class CharactersMainFragment : Fragment() {
     private lateinit var charactersAdapter: CharacterListAdapter
@@ -39,7 +39,8 @@ class CharactersMainFragment : Fragment() {
             layoutManager = GridLayoutManager(requireContext(),2)
             adapter = charactersAdapter
             addItemDecoration(
-                    MarginDecorator(resources.getDimensionPixelSize(R.dimen.small_margin)))
+                GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.small_margin) , true, 0)
+            )
         }
         charactersAdapter.submitUpdate(viewModel.list)
 

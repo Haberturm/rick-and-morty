@@ -12,44 +12,44 @@ class CharactersMainViewModel : ViewModel() {
 
     val list = listOf<CharacterUi>(
         CharacterUi(
-            1,
-            "dddd",
-            "ddddd",
-            "flkfsg",
-            "kg;kfd;kg",
+            0,
+            "Morty Smith",
+            "Alive",
+            "Male",
+            "Human",
            " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
         ),
         CharacterUi(
+            1,
+            "Morty Smith",
+            "Alive",
+            "Male",
+            "Human",
+            " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
+        ),
+        CharacterUi(
             2,
-            "dddd",
-            "ddddd",
-            "flkfsg",
-            "kg;kfd;kg",
+            "Morty Smith",
+            "Alive",
+            "Male",
+            "Human",
             " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
         ),
         CharacterUi(
             3,
-            "dddd",
-            "ddddd",
-            "flkfsg",
-            "kg;kfd;kg",
+            "Morty Smith",
+            "Alive",
+            "Male",
+            "Human",
             " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
         ),
         CharacterUi(
             4,
-            "dddd",
-            "ddddd",
-            "flkfsg",
-            "kg;kfd;kg",
+            "Morty Smith",
+            "Alive",
+            "Male",
+            "Human",
             " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
         ),
-        CharacterUi(
-            5,
-            "dddd",
-            "ddddd",
-            "flkfsg",
-            "kg;kfd;kg",
-            " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        )
     )
 }
