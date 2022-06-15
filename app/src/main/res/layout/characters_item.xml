@@ -31,6 +31,8 @@
                 app:shapeAppearanceOverlay="@style/round_image_view"
                 app:strokeColor="@color/purple_200"
                 app:strokeWidth="1dp"
+                android:scaleType="centerCrop"
+                app:imageUrl="@{character.image}"
                 tools:background="@color/black" />
 
             <LinearLayout
@@ -50,7 +52,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{character.gender + ',' + ' ' + character.species + ',' + ' ' + character.status}"
+                    android:text="@{character.species + ',' + ' ' + character.gender + ',' + ' ' + character.status}"
                     tools:text="Human, male, alive" />
             </LinearLayout>
         </LinearLayout>
