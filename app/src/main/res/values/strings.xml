@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">rickAndMorty</string>
     <string name="location_additional_template">%1$s, %2$s</string>
+    <string name="character_additional_template">%1$s, %2$s, %3$s</string>
 </resources>

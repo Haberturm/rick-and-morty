@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="character"
-            type="com.haberturm.rickandmorty.entities.CharacterUi" />
-    </data>
-
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,14 +18,13 @@
             android:orientation="horizontal">
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imageView"
+                android:id="@+id/character_image"
                 android:layout_width="@dimen/character_image_size"
                 android:layout_height="@dimen/character_image_size"
                 app:shapeAppearanceOverlay="@style/round_image_view"
                 app:strokeColor="@color/purple_200"
                 app:strokeWidth="1dp"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{character.image}"
                 tools:background="@color/black" />
 
             <LinearLayout
@@ -43,16 +35,16 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/character_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{character.name}"
                     android:textColor="@color/black"
                     tools:text="Rick Sanchez" />
 
                 <TextView
+                    android:id="@+id/character_additional"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{character.species + ',' + ' ' + character.gender + ',' + ' ' + character.status}"
                     tools:text="Human, male, alive" />
             </LinearLayout>
         </LinearLayout>

@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 //set the start fragment (in this case: characters fragment)
 private fun setStartFragment(fragmentManager: FragmentManager) {
     fragmentManager.commit {
-        replace<LocationsMainFragment>(R.id.fragment_container)
+        replace<CharactersMainFragment>(R.id.fragment_container)
         setReorderingAllowed(true)
     }
 }

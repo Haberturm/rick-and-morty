@@ -60,7 +60,6 @@ class LocationListAdapter(
                     location.type,
                     location.dimension
                 )
-            binding.executePendingBindings()
         }
     }
 

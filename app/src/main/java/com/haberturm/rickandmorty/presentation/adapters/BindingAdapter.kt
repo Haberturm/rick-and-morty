@@ -14,3 +14,12 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             .into(imgView)
     }
 }
+
+
+fun ImageView.loadImage(url: String){
+    val uri = url.toUri().buildUpon().scheme("https").build()
+    Glide.with(this.context)
+        .load(uri)
+        .into(this)
+
+}
