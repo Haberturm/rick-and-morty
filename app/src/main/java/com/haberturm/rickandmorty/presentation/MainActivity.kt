@@ -7,6 +7,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.presentation.charcters.CharactersMainFragment
+import com.haberturm.rickandmorty.presentation.episodes.EpisodesMainFragment
 import com.haberturm.rickandmorty.presentation.locations.LocationsMainFragment
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 //set the start fragment (in this case: characters fragment)
 private fun setStartFragment(fragmentManager: FragmentManager) {
     fragmentManager.commit {
-        replace<CharactersMainFragment>(R.id.fragment_container)
+        replace<EpisodesMainFragment>(R.id.fragment_container)
         setReorderingAllowed(true)
     }
 }
