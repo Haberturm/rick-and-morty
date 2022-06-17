@@ -43,7 +43,7 @@ class LocationsMainFragment : Fragment() {
             layoutManager = GridLayoutManager(requireContext(),2)
             adapter = locationsAdapter
             addItemDecoration(
-                GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.small_margin) , true, 0)
+                GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0)
             )
         }
         locationsAdapter.submitUpdate(viewModel.list)
