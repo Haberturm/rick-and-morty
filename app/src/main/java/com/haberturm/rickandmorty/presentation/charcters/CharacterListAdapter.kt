@@ -1,17 +1,20 @@
 package com.haberturm.rickandmorty.presentation.charcters
 
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.CharactersItemBinding
 import com.haberturm.rickandmorty.entities.CharacterUi
-
+import com.haberturm.rickandmorty.util.loadImage
 
 
 class CharacterListAdapter(
-    private val listener: ActionClickListener
+    private val listener: ActionClickListener,
+    private val context: Context
 ) :
     RecyclerView.Adapter<CharacterListAdapter.ViewHolder>() {
 
@@ -22,7 +25,14 @@ class CharacterListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ViewHolder {
-        return ViewHolder(CharactersItemBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+        return ViewHolder(
+            CharactersItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ),
+            context
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -42,10 +52,19 @@ class CharacterListAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class ViewHolder(private var binding: CharactersItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(character: CharacterUi){
-            binding.character = character
-            binding.executePendingBindings()
+    class ViewHolder(
+        private var binding: CharactersItemBinding,
+        private val context: Context
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(character: CharacterUi) {
+            binding.characterName.text = character.name
+            binding.characterImage.loadImage(character.image)
+            binding.characterAdditional.text = context.resources.getString(
+                R.string.character_additional_template,
+                character.species,
+                character.gender,
+                character.status
+            )
         }
     }
 

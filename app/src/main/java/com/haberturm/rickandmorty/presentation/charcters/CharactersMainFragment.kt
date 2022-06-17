@@ -21,11 +21,12 @@ class CharactersMainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         charactersAdapter = CharacterListAdapter(
-            object : CharacterListAdapter.ActionClickListener{
+            listener = object : CharacterListAdapter.ActionClickListener{
                 override fun showDetail(id: Int) {
                     viewModel.showDetails()
                 }
-            }
+            },
+            context = requireContext()
         )
     }
 
