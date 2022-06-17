@@ -1,6 +1,5 @@
 package com.haberturm.rickandmorty.presentation.charcters
 
-
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.CharactersItemBinding
 import com.haberturm.rickandmorty.entities.CharacterUi
 import com.haberturm.rickandmorty.util.loadImage
-
 
 class CharacterListAdapter(
     private val listener: ActionClickListener,
