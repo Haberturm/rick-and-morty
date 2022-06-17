@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.CharactersItemBinding
 import com.haberturm.rickandmorty.entities.CharacterUi
-import com.haberturm.rickandmorty.presentation.adapters.loadImage
+import com.haberturm.rickandmorty.util.loadImage
 
 
 class CharacterListAdapter(
