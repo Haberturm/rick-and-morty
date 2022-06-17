@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/characters"
+        android:enabled="true"
+        android:title="Персонажи"/>
+    <item
+        android:id="@+id/locations"
+        android:enabled="true"
+        android:title="Локации"/>
+    <item
+        android:id="@+id/episodes"
+        android:enabled="true"
+        android:title="Эпизоды"/>
+</menu>
