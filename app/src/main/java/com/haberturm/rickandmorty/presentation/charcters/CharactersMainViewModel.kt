@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.haberturm.data.api.RetrofitClient
+import com.haberturm.data.repositories.RepositoryImpl
+import com.haberturm.domain.repositories.Repository
 import com.haberturm.rickandmorty.entities.CharacterUi
 import kotlinx.coroutines.launch
 
@@ -11,7 +13,8 @@ class CharactersMainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            Log.i("DATA", "${RetrofitClient.retrofit.getDataList()}")
+            //getRepo().getCharacters()
+            Log.i("DATA", "${getRepo().getCharacters()}")
         }
 
     }
@@ -20,6 +23,9 @@ class CharactersMainViewModel : ViewModel() {
 
     }
 
+    fun getRepo(): Repository {
+        return RepositoryImpl()
+    }
 
     val list = listOf<CharacterUi>(
         CharacterUi(
