@@ -1,9 +1,20 @@
 package com.haberturm.rickandmorty.presentation.charcters
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.haberturm.data.api.RetrofitClient
 import com.haberturm.rickandmorty.entities.CharacterUi
+import kotlinx.coroutines.launch
 
 class CharactersMainViewModel : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            Log.i("DATA", "${RetrofitClient.retrofit.getDataList()}")
+        }
+
+    }
 
     fun showDetails(){
 
