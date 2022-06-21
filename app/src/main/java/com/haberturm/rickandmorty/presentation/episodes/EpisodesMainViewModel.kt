@@ -1,7 +1,7 @@
 package com.haberturm.rickandmorty.presentation.episodes
 
 import androidx.lifecycle.ViewModel
-import com.haberturm.rickandmorty.entities.EpisodeUi
+import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
 
 class EpisodesMainViewModel : ViewModel() {
 

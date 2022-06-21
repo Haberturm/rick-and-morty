@@ -1,7 +1,7 @@
 package com.haberturm.rickandmorty.presentation.locations
 
 import androidx.lifecycle.ViewModel
-import com.haberturm.rickandmorty.entities.LocationUi
+import com.haberturm.rickandmorty.presentation.entities.LocationUi
 
 class LocationsMainViewModel : ViewModel() {
 

@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.entities
+package com.haberturm.rickandmorty.presentation.entities
 
 data class LocationUi(
     val id: Int,

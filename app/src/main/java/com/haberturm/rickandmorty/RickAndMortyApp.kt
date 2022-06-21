@@ -1,7 +1,5 @@
 package com.haberturm.rickandmorty
 
-import android.app.Application
-import android.content.Context
 import com.haberturm.rickandmorty.di.AppComponent
 import com.haberturm.rickandmorty.di.DaggerAppComponent
 import dagger.android.AndroidInjector
