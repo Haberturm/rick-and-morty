@@ -1,4 +1,4 @@
-package com.haberturm.data.api
+package com.haberturm.rickandmorty.data.api
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient

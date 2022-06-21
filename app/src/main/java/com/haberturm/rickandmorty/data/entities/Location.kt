@@ -1,9 +1,9 @@
-package com.haberturm.data.entities
+package com.haberturm.rickandmorty.data.entities
 
 import com.google.gson.annotations.SerializedName
 
 
-data class Origin (
+data class Location (
 
   @SerializedName("name" ) var name : String? = null,
   @SerializedName("url"  ) var url  : String? = null
