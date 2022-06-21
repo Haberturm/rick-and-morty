@@ -1,6 +1,6 @@
-package com.haberturm.data.api
+package com.haberturm.rickandmorty.data.api
 
-import com.haberturm.data.entities.CharactersResponseData
+import com.haberturm.rickandmorty.data.entities.CharactersResponseData
 import retrofit2.http.GET
 
 interface RickAndMortyApi {

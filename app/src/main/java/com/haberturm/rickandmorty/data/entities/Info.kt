@@ -1,4 +1,4 @@
-package com.haberturm.data.entities
+package com.haberturm.rickandmorty.data.entities
 
 import com.google.gson.annotations.SerializedName
 

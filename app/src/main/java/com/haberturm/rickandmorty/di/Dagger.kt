@@ -1,7 +1,7 @@
 package com.haberturm.rickandmorty.di
 
-import com.haberturm.data.repositories.RepositoryImpl
-import com.haberturm.domain.repositories.Repository
+import com.haberturm.rickandmorty.data.repositories.RepositoryImpl
+import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.presentation.MainActivity
 import dagger.Binds
 import dagger.Component

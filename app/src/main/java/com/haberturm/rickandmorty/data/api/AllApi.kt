@@ -1,4 +1,4 @@
-package com.haberturm.data.api
+package com.haberturm.rickandmorty.data.api
 
 object AllApi {
     const val RICK_AND_MORTY_BASE_URL = "https://rickandmortyapi.com/api/"
