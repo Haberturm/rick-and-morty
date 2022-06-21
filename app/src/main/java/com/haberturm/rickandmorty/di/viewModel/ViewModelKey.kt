@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.di
+package com.haberturm.rickandmorty.di.viewModel
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey
