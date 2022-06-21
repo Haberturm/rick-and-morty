@@ -7,13 +7,16 @@ import com.haberturm.rickandmorty.data.repositories.RepositoryImpl
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.entities.CharacterUi
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CharactersMainViewModel : ViewModel() {
+class CharactersMainViewModel @Inject constructor(
+    private val repository: Repository
+): ViewModel() {
 
     init {
         viewModelScope.launch {
             //getRepo().getCharacters()
-            Log.i("DATA", "${getRepo().getCharacters()}")
+            Log.i("DATA", "${repository.getCharacters()}")
         }
 
     }
