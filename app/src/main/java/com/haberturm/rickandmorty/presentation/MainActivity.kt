@@ -1,6 +1,5 @@
 package com.haberturm.rickandmorty.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -10,8 +9,9 @@ import com.haberturm.rickandmorty.presentation.charcters.CharactersMainFragment
 import com.haberturm.rickandmorty.presentation.episodes.EpisodesMainFragment
 import com.haberturm.rickandmorty.presentation.locations.LocationsMainFragment
 import com.haberturm.rickandmorty.util.Const.FRAGMENT_KEY
+import dagger.android.support.DaggerAppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DaggerAppCompatActivity() {
     var currentFragmentName: String? = null
 
 

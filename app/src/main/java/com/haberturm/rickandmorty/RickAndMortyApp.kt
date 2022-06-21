@@ -4,21 +4,21 @@ import android.app.Application
 import android.content.Context
 import com.haberturm.rickandmorty.di.AppComponent
 import com.haberturm.rickandmorty.di.DaggerAppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 
-class RickAndMortyApp : Application() {
+class RickAndMortyApp : DaggerApplication() {
 
     lateinit var appComponent: AppComponent
         private set
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.create()
+    }
+
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        appComponent = DaggerAppComponent.builder().application(this).build()
+        return appComponent
     }
 
 }
-
-val Context.appComponent: AppComponent
-    get() = when (this) {
-        is RickAndMortyApp -> appComponent
-        else -> applicationContext.appComponent
-    }
