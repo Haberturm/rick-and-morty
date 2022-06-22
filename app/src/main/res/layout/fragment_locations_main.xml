@@ -28,6 +28,12 @@
             android:layout_gravity="center"
             android:indeterminate="true" />
 
+        <include
+            android:id="@+id/error"
+            layout="@layout/error_layout"
+            android:visibility="gone"
+            />
+
     </FrameLayout>
 
 
