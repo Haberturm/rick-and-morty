@@ -22,12 +22,9 @@ class CharactersMainFragment : DaggerFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-
     private val viewModel: CharactersMainViewModel by lazy {
         ViewModelProvider(requireActivity(), viewModelFactory)[CharactersMainViewModel::class.java]
     }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
