@@ -58,13 +58,18 @@ class CharactersMainFragment : DaggerFragment() {
                 when (state) {
                     UiState.Loading -> {
                         binding.loadingIndicator.visibility = View.VISIBLE
+                        binding.error.root.visibility = View.GONE
                     }
                     is UiState.Error -> {
                         binding.loadingIndicator.visibility = View.GONE
                         binding.error.root.visibility = View.VISIBLE
+                        binding.error.errorRefreshButton.setOnClickListener {
+                            viewModel.getData()
+                        }
                     }
                     is UiState.Data -> {
                         binding.loadingIndicator.visibility = View.GONE
+                        binding.error.root.visibility = View.GONE
                         charactersAdapter.submitUpdate(state.data)
                     }
                 }
