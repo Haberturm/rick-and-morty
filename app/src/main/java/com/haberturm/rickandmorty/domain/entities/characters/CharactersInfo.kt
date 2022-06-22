@@ -1,6 +1,6 @@
 package com.haberturm.rickandmorty.domain.entities.characters
 
-data class Info (
+data class CharactersInfo (
 
   var count : Int,
   var pages : Int,

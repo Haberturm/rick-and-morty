@@ -1,6 +1,6 @@
 package com.haberturm.rickandmorty.domain.entities.characters
 
-data class Origin (
+data class CharacterOrigin (
 
   var name : String,
   var url  : String

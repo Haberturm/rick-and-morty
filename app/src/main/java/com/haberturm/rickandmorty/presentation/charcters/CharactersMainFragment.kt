@@ -73,8 +73,6 @@ class CharactersMainFragment : DaggerFragment() {
             }
         })
 
-       // charactersAdapter.submitUpdate(viewModel.list)
-
         return binding.root
     }
 }

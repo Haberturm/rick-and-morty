@@ -26,23 +26,7 @@ class CharactersMainViewModel @Inject constructor(
 
 
     init {
-        viewModelScope.launch {
-            _uiState.postValue(UiState.Loading)
-            when(val data = repository.getCharacters()){
-                is ApiState.Success<Characters> -> {
-                    Log.i("DATA", data.data.toString())
-                    _uiState.postValue(
-                        UiState.Data(CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(data.data))
-                    )
-                }
-                is ApiState.Error -> {
-                    Log.i("DATA", data.exception.toString())
-                    UiState.Error(Exception(data.exception))
-                }
-            }
 
-            //Log.i("DATA", "${CharactersUiMapper().fromDomainToUi<Characters, CharacterUi>(repository.getCharacters())}")
-        }
     }
 
     fun getData(){
@@ -58,8 +42,6 @@ class CharactersMainViewModel @Inject constructor(
                     UiState.Error(Exception(data.exception))
                 }
             }
-
-            //Log.i("DATA", "${CharactersUiMapper().fromDomainToUi<Characters, CharacterUi>(repository.getCharacters())}")
         }
     }
 
@@ -67,51 +49,4 @@ class CharactersMainViewModel @Inject constructor(
     fun showDetails(){
 
     }
-
-    fun getRepo(): Repository {
-        return RepositoryImpl()
-    }
-
-    val list = listOf<CharacterUi>(
-        CharacterUi(
-            0,
-            "Morty Smith",
-            "Alive",
-            "Male",
-            "Human",
-           " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterUi(
-            1,
-            "Morty Smith",
-            "Alive",
-            "Male",
-            "Human",
-            " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterUi(
-            2,
-            "Morty Smith",
-            "Alive",
-            "Male",
-            "Human",
-            " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterUi(
-            3,
-            "Morty Smith",
-            "Alive",
-            "Male",
-            "Human",
-            " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterUi(
-            4,
-            "Morty Smith",
-            "Alive",
-            "Male",
-            "Human",
-            " https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-    )
 }

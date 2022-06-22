@@ -3,13 +3,17 @@ package com.haberturm.rickandmorty.presentation.mappers.characters
 import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.mappers.UiMapper
+import com.haberturm.rickandmorty.util.Util
 import java.lang.IllegalArgumentException
 
 class CharactersUiMapper : UiMapper() {
     @Suppress("UNCHECKED_CAST")
     override fun <T, D> fromDomainToUi(data: T): D {
         if (data !is Characters) {
-            throw IllegalArgumentException("data must be type Characters")
+            Util.throwException(
+                source = "${this::class.qualifiedName}",
+                message = "data must be type Characters"
+            )
         }
         val charactersDomain = (data as Characters)
         return charactersDomain.results.map { character ->

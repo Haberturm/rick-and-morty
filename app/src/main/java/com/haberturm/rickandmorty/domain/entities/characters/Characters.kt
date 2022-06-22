@@ -1,6 +1,6 @@
 package com.haberturm.rickandmorty.domain.entities.characters
 
 data class Characters(
-    var info: Info,
-    var results: ArrayList<Results>
+    var info: CharactersInfo,
+    var results: ArrayList<CharacterResults>
 )
