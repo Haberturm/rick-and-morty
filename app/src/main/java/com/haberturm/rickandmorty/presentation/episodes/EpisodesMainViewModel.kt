@@ -41,7 +41,7 @@ class EpisodesMainViewModel @Inject constructor(
                 }
                 is ApiState.Error -> {
                     Log.e("EXCEPTION", data.exception.toString())
-                    UiState.Error(Exception(data.exception))
+                    _uiState.postValue(UiState.Error(Exception(data.exception)))
                 }
             }
         }

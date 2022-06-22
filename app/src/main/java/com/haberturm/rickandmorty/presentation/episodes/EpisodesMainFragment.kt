@@ -57,13 +57,18 @@ class EpisodesMainFragment : DaggerFragment() {
                 when (state) {
                     UiState.Loading -> {
                         binding.loadingIndicator.visibility = View.VISIBLE
+                        binding.error.root.visibility = View.GONE
                     }
                     is UiState.Error -> {
                         binding.loadingIndicator.visibility = View.GONE
-                        //todo
+                        binding.error.root.visibility = View.VISIBLE
+                        binding.error.errorRefreshButton.setOnClickListener {
+                            viewModel.getData()
+                        }
                     }
                     is UiState.Data -> {
                         binding.loadingIndicator.visibility = View.GONE
+                        binding.error.root.visibility = View.GONE
                         episodesAdapter.submitUpdate(state.data)
                     }
                 }
