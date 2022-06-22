@@ -7,14 +7,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/characters_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:itemCount="4"
-        tools:layoutManager="GridLayoutManager"
-        tools:listitem="@layout/characters_item"
-        tools:spanCount="2" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/characters_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:itemCount="4"
+            tools:layoutManager="GridLayoutManager"
+            tools:listitem="@layout/characters_item"
+            tools:spanCount="2" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+    </FrameLayout>
 
 
 </LinearLayout>

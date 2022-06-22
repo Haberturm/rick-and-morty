@@ -1,6 +1,5 @@
 package com.haberturm.rickandmorty.data.repositories
 
-import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.data.mappers.characters.CharactersDataMapper
@@ -14,7 +13,6 @@ import com.haberturm.rickandmorty.domain.repositories.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import java.lang.Exception
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor() : Repository {
