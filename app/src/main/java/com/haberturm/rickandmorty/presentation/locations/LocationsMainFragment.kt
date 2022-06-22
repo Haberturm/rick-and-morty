@@ -9,14 +9,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentLocationsMainBinding
+import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
+import com.haberturm.rickandmorty.presentation.charcters.CharactersMainViewModel
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
+import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
-class LocationsMainFragment : Fragment() {
-
+class LocationsMainFragment : DaggerFragment() {
     private lateinit var locationsAdapter: LocationListAdapter
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+
     private val viewModel: LocationsMainViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(LocationsMainViewModel::class.java)
+        ViewModelProvider(requireActivity(), viewModelFactory)[LocationsMainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
