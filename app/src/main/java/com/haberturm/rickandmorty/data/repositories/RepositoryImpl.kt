@@ -1,45 +1,57 @@
 package com.haberturm.rickandmorty.data.repositories
 
 import com.haberturm.rickandmorty.data.api.RetrofitClient
+import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.data.mappers.characters.CharactersDataMapper
+import com.haberturm.rickandmorty.data.mappers.episodes.EpisodesDataMapper
 import com.haberturm.rickandmorty.data.mappers.locations.LocationsDataMapper
 import com.haberturm.rickandmorty.domain.common.ApiState
 import com.haberturm.rickandmorty.domain.entities.characters.Characters
+import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 import java.lang.Exception
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor() : Repository {
     override suspend fun getCharacters(): ApiState<Characters> =
         withContext(Dispatchers.IO) {
-            try {
-                val response = RetrofitClient.retrofit.getCharacters()
-                if (response.isSuccessful){
-                    return@withContext ApiState.Success(CharactersDataMapper().fromDataToDomain(response.body()))
-                }else{
-                    return@withContext ApiState.Error(Exception(response.message()))
-                }
-            }catch (e: Exception){
-                return@withContext ApiState.Error(e)
-            }
-
+            return@withContext stateWrapper(
+                response = RetrofitClient.retrofit.getCharacters(),
+                mapper = CharactersDataMapper()
+            )
         }
 
     override suspend fun getLocations(): ApiState<Locations> =
         withContext(Dispatchers.IO) {
-            try {
-                val response = RetrofitClient.retrofit.getLocations()
-                if (response.isSuccessful){
-                    return@withContext ApiState.Success(LocationsDataMapper().fromDataToDomain(response.body()))
-                }else{
-                    return@withContext ApiState.Error(Exception(response.message()))
-                }
-            }catch (e: Exception){
-                return@withContext ApiState.Error(e)
-            }
-
+            return@withContext stateWrapper(
+                response = RetrofitClient.retrofit.getLocations(),
+                mapper = LocationsDataMapper()
+            )
         }
+
+    override suspend fun getEpisodes(): ApiState<Episodes> =
+        withContext(Dispatchers.IO) {
+            return@withContext stateWrapper(
+                response = RetrofitClient.retrofit.getEpisodes(),
+                mapper = EpisodesDataMapper()
+            )
+        }
+}
+
+
+
+fun <T, D>stateWrapper(response: Response<D>, mapper: DataMapper) : ApiState<T>{
+    return try {
+        if (response.isSuccessful){
+            ApiState.Success(mapper.fromDataToDomain(response.body()))
+        }else{
+            ApiState.Error(Exception(response.message()))
+        }
+    }catch (e: Exception){
+        ApiState.Error(e)
+    }
 }
