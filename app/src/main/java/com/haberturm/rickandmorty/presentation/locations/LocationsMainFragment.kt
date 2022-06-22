@@ -56,12 +56,14 @@ class LocationsMainFragment : DaggerFragment() {
             if (state != null) {
                 when (state) {
                     UiState.Loading -> {
-                        //todo
+                        binding.loadingIndicator.visibility = View.VISIBLE
                     }
                     is UiState.Error -> {
-
+                        binding.loadingIndicator.visibility = View.GONE
+                        //todo
                     }
                     is UiState.Data -> {
+                        binding.loadingIndicator.visibility = View.GONE
                         locationsAdapter.submitUpdate(state.data)
                     }
                 }
