@@ -26,66 +26,28 @@ class EpisodesMainViewModel @Inject constructor(
     val uiState: LiveData<UiState<List<EpisodeUi>>>
         get() = _uiState
 
-    fun getData(){
+    fun getData() {
         viewModelScope.launch {
             _uiState.postValue(UiState.Loading)
-
-            when(val data = repository.getEpisodes()){
-
+            when (val data = repository.getEpisodes()) {
                 is ApiState.Success<Episodes> -> {
-
                     _uiState.postValue(
-                        UiState.Data(EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(data.data))
+                        UiState.Data(
+                            EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
+                                data.data
+                            )
+                        )
                     )
                 }
                 is ApiState.Error -> {
-                    Log.i("DATA", data.exception.toString())
+                    Log.e("EXCEPTION", data.exception.toString())
                     UiState.Error(Exception(data.exception))
                 }
             }
         }
     }
 
-    fun showDetails(){
+    fun showDetails() {
 
     }
-
-    val list = listOf(
-        EpisodeUi(
-            1,
-            "Pilot",
-            "S01E01",
-            "December 2, 2013",
-            ),
-        EpisodeUi(
-            2,
-            "Pilot",
-            "S01E01",
-            "December 2, 2013",
-        ),
-        EpisodeUi(
-            3,
-            "Pilot",
-            "S01E01",
-            "December 2, 2013",
-        ),
-        EpisodeUi(
-            4,
-            "Pilot",
-            "S01E01",
-            "December 2, 2013",
-        ),
-        EpisodeUi(
-            5,
-            "Pilot",
-            "S01E01",
-            "December 2, 2013",
-        ),
-        EpisodeUi(
-            6,
-            "Pilot",
-            "S01E01",
-            "December 2, 2013",
-        ),
-    )
 }

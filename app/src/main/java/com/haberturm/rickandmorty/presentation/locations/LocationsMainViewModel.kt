@@ -1,17 +1,15 @@
 package com.haberturm.rickandmorty.presentation.locations
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.haberturm.rickandmorty.domain.common.ApiState
-import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.presentation.common.UiState
-import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.entities.LocationUi
-import com.haberturm.rickandmorty.presentation.mappers.characters.CharactersUiMapper
 import com.haberturm.rickandmorty.presentation.mappers.locations.LocationsUiMapper
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -36,53 +34,14 @@ class LocationsMainViewModel @Inject constructor(
                     )
                 }
                 is ApiState.Error -> {
+                    Log.e("EXCEPTION", data.exception.toString())
                     UiState.Error(Exception(data.exception))
                 }
             }
         }
     }
 
-
     fun showDetails(){
 
     }
-
-    val list = listOf<LocationUi>(
-        LocationUi(
-            1,
-            "Citadels of Ricks",
-            "Space station",
-            "unknown",
-        ),
-        LocationUi(
-            2,
-            "Citadels of Ricks",
-            "Space station",
-            "unknown",
-        ),
-        LocationUi(
-            3,
-            "Citadels of Ricks",
-            "Space station",
-            "unknown",
-        ),
-        LocationUi(
-            4,
-            "Citadels of Ricks",
-            "Space station",
-            "unknown",
-        ),
-        LocationUi(
-            5,
-            "Citadels of Ricks",
-            "Space station",
-            "unknown",
-        ),
-        LocationUi(
-            6,
-            "Citadels of Ricks",
-            "Space station",
-            "unknown",
-        )
-    )
 }

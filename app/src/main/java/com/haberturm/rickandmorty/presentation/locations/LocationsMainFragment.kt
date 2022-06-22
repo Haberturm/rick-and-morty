@@ -1,7 +1,6 @@
 package com.haberturm.rickandmorty.presentation.locations
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,10 +59,9 @@ class LocationsMainFragment : DaggerFragment() {
                         //todo
                     }
                     is UiState.Error -> {
-                        Log.i("DATA", state.exception.toString())
+
                     }
                     is UiState.Data -> {
-                        Log.i("DATA", state.data.toString())
                         locationsAdapter.submitUpdate(state.data)
                     }
                 }

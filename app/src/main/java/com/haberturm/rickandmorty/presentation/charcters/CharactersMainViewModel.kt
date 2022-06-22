@@ -18,27 +18,27 @@ import javax.inject.Inject
 
 class CharactersMainViewModel @Inject constructor(
     private val repository: Repository
-): ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState<List<CharacterUi>>>(null)
     val uiState: LiveData<UiState<List<CharacterUi>>>
         get() = _uiState
 
-
-    init {
-
-    }
-
-    fun getData(){
+    fun getData() {
         viewModelScope.launch {
             _uiState.postValue(UiState.Loading)
-            when(val data = repository.getCharacters()){
+            when (val data = repository.getCharacters()) {
                 is ApiState.Success<Characters> -> {
                     _uiState.postValue(
-                        UiState.Data(CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(data.data))
+                        UiState.Data(
+                            CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
+                                data.data
+                            )
+                        )
                     )
                 }
                 is ApiState.Error -> {
+                    Log.e("EXCEPTION", data.exception.toString())
                     UiState.Error(Exception(data.exception))
                 }
             }
@@ -46,7 +46,7 @@ class CharactersMainViewModel @Inject constructor(
     }
 
 
-    fun showDetails(){
+    fun showDetails() {
 
     }
 }
