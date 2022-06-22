@@ -1,16 +1,17 @@
 package com.haberturm.rickandmorty.presentation.locations
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentLocationsMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
-import com.haberturm.rickandmorty.presentation.charcters.CharactersMainViewModel
+import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -36,6 +37,7 @@ class LocationsMainFragment : DaggerFragment() {
             },
             context = requireContext()
         )
+        viewModel.getData()
     }
 
     override fun onCreateView(
@@ -51,7 +53,22 @@ class LocationsMainFragment : DaggerFragment() {
                 GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0)
             )
         }
-        locationsAdapter.submitUpdate(viewModel.list)
+        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
+            if (state != null) {
+                when (state) {
+                    UiState.Loading -> {
+                        //todo
+                    }
+                    is UiState.Error -> {
+                        Log.i("DATA", state.exception.toString())
+                    }
+                    is UiState.Data -> {
+                        Log.i("DATA", state.data.toString())
+                        locationsAdapter.submitUpdate(state.data)
+                    }
+                }
+            }
+        })
 
         return binding.root
     }
