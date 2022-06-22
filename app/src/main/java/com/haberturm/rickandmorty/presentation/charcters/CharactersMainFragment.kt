@@ -61,7 +61,7 @@ class CharactersMainFragment : DaggerFragment() {
                     }
                     is UiState.Error -> {
                         binding.loadingIndicator.visibility = View.GONE
-                        //todo
+                        binding.error.root.visibility = View.VISIBLE
                     }
                     is UiState.Data -> {
                         binding.loadingIndicator.visibility = View.GONE
