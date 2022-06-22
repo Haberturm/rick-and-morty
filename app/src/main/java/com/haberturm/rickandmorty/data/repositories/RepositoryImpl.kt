@@ -1,5 +1,6 @@
 package com.haberturm.rickandmorty.data.repositories
 
+import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.data.mappers.characters.CharactersDataMapper
@@ -49,7 +50,7 @@ fun <T, D>stateWrapper(response: Response<D>, mapper: DataMapper) : ApiState<T>{
         if (response.isSuccessful){
             ApiState.Success(mapper.fromDataToDomain(response.body()))
         }else{
-            ApiState.Error(Exception(response.message()))
+            ApiState.Error(Exception(response.raw().toString()))
         }
     }catch (e: Exception){
         ApiState.Error(e)

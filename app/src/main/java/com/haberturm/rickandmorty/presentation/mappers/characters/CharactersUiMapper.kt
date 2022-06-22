@@ -4,13 +4,12 @@ import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.mappers.UiMapper
 import com.haberturm.rickandmorty.util.Util
-import java.lang.IllegalArgumentException
 
 class CharactersUiMapper : UiMapper() {
     @Suppress("UNCHECKED_CAST")
     override fun <T, D> fromDomainToUi(data: T): D {
         if (data !is Characters) {
-            Util.throwException(
+            Util.throwIllegalArgumentException(
                 source = "${this::class.qualifiedName}",
                 message = "data must be type Characters"
             )

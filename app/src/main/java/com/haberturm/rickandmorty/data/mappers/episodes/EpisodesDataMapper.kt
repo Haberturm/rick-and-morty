@@ -1,9 +1,7 @@
 package com.haberturm.rickandmorty.data.mappers.episodes
 
-import com.haberturm.rickandmorty.data.entities.characters.CharactersResponseData
 import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResponseData
 import com.haberturm.rickandmorty.data.mappers.DataMapper
-import com.haberturm.rickandmorty.domain.entities.characters.*
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesInfo
 import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesResults
@@ -13,7 +11,7 @@ class EpisodesDataMapper : DataMapper() {
     @Suppress("UNCHECKED_CAST")
     override fun <T, D> fromDataToDomain(data: T): D {
         if (data !is EpisodesResponseData) {
-            Util.throwException(
+            Util.throwIllegalArgumentException(
                 source = "${this::class.qualifiedName}",
                 message = "data must be type EpisodesResponseData"
             )

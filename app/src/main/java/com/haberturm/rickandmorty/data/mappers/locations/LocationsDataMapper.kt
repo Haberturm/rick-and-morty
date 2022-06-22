@@ -6,13 +6,12 @@ import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.entities.locations.LocationResults
 import com.haberturm.rickandmorty.domain.entities.locations.LocationsInfo
 import com.haberturm.rickandmorty.util.Util
-import java.lang.IllegalArgumentException
 
 class LocationsDataMapper : DataMapper() {
     @Suppress("UNCHECKED_CAST")
     override fun <T, D> fromDataToDomain(data: T): D {
         if (data !is LocationsResponseData) {
-            Util.throwException(
+            Util.throwIllegalArgumentException(
                 source = "${this::class.qualifiedName}",
                 message = "data must be type LocationsResponseData"
             )

@@ -9,7 +9,7 @@ class LocationsUiMapper : UiMapper() {
     @Suppress("UNCHECKED_CAST")
     override fun <T, D> fromDomainToUi(data: T): D {
         if (data !is Locations){
-            Util.throwException(
+            Util.throwIllegalArgumentException(
                 source = "${this::class.qualifiedName}",
                 message = "data must be type Locations"
             )
