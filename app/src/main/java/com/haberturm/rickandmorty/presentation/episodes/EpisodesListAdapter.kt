@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.EpisodesItemBinding
-import com.haberturm.rickandmorty.entities.EpisodeUi
+import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
 
 
 class EpisodesListAdapter(

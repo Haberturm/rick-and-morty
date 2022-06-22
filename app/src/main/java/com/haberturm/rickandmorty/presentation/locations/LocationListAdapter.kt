@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.LocationsItemBinding
-import com.haberturm.rickandmorty.entities.LocationUi
+import com.haberturm.rickandmorty.presentation.entities.LocationUi
 
 class LocationListAdapter(
     private val listener: ActionClickListener,

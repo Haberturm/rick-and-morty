@@ -1,10 +1,19 @@
 package com.haberturm.rickandmorty.data.api
 
-import com.haberturm.rickandmorty.data.entities.CharactersResponseData
+import com.haberturm.rickandmorty.data.entities.characters.CharactersResponseData
+import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResponseData
+import com.haberturm.rickandmorty.data.entities.locations.LocationsResponseData
+import retrofit2.Response
 import retrofit2.http.GET
 
 interface RickAndMortyApi {
 
     @GET(AllApi.CHARACTERS)
-    suspend fun getDataList(): CharactersResponseData
+    suspend fun getCharacters(): Response<CharactersResponseData>
+
+    @GET(AllApi.LOCATIONS)
+    suspend fun getLocations(): Response<LocationsResponseData>
+
+    @GET(AllApi.EPISODES)
+    suspend fun getEpisodes(): Response<EpisodesResponseData>
 }
