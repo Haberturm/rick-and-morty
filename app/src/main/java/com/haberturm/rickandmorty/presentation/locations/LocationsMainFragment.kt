@@ -1,6 +1,7 @@
 package com.haberturm.rickandmorty.presentation.locations
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,12 +57,19 @@ class LocationsMainFragment : DaggerFragment() {
             if (state != null) {
                 when (state) {
                     UiState.Loading -> {
-                        //todo
+                        binding.loadingIndicator.visibility = View.VISIBLE
+                        binding.error.root.visibility = View.GONE
                     }
                     is UiState.Error -> {
-
+                        binding.loadingIndicator.visibility = View.GONE
+                        binding.error.root.visibility = View.VISIBLE
+                        binding.error.errorRefreshButton.setOnClickListener {
+                            viewModel.getData()
+                        }
                     }
                     is UiState.Data -> {
+                        binding.loadingIndicator.visibility = View.GONE
+                        binding.error.root.visibility = View.GONE
                         locationsAdapter.submitUpdate(state.data)
                     }
                 }

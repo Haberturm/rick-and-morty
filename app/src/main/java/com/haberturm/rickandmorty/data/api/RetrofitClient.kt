@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val TIME_OUT: Long = 120
+    private const val TIME_OUT: Long = 30
 
     private val gson = GsonBuilder().setLenient().create()
 

@@ -1,6 +1,5 @@
 package com.haberturm.rickandmorty.data.repositories
 
-import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.data.mappers.characters.CharactersDataMapper
@@ -14,14 +13,13 @@ import com.haberturm.rickandmorty.domain.repositories.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import java.lang.Exception
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor() : Repository {
     override suspend fun getCharacters(): ApiState<Characters> =
         withContext(Dispatchers.IO) {
             return@withContext stateWrapper(
-                response = RetrofitClient.retrofit.getCharacters(),
+                getData= {RetrofitClient.retrofit.getCharacters()},
                 mapper = CharactersDataMapper()
             )
         }
@@ -29,7 +27,7 @@ class RepositoryImpl @Inject constructor() : Repository {
     override suspend fun getLocations(): ApiState<Locations> =
         withContext(Dispatchers.IO) {
             return@withContext stateWrapper(
-                response = RetrofitClient.retrofit.getLocations(),
+                getData = {RetrofitClient.retrofit.getLocations()},
                 mapper = LocationsDataMapper()
             )
         }
@@ -37,7 +35,7 @@ class RepositoryImpl @Inject constructor() : Repository {
     override suspend fun getEpisodes(): ApiState<Episodes> =
         withContext(Dispatchers.IO) {
             return@withContext stateWrapper(
-                response = RetrofitClient.retrofit.getEpisodes(),
+                getData = {RetrofitClient.retrofit.getEpisodes()},
                 mapper = EpisodesDataMapper()
             )
         }
@@ -45,8 +43,9 @@ class RepositoryImpl @Inject constructor() : Repository {
 
 
 
-fun <T, D>stateWrapper(response: Response<D>, mapper: DataMapper) : ApiState<T>{
+suspend fun <T, D>stateWrapper(getData: suspend () -> Response<D>, mapper: DataMapper) : ApiState<T>{
     return try {
+        val response = getData()
         if (response.isSuccessful){
             ApiState.Success(mapper.fromDataToDomain(response.body()))
         }else{
