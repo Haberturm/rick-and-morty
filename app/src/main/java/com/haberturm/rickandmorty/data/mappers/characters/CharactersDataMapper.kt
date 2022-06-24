@@ -25,16 +25,16 @@ class CharactersDataMapper() : DataMapper() {
                     type = resultsData.species,
                     gender = resultsData.gender,
                     origin = CharacterOrigin(
-                        name = resultsData.origin.name,
-                        url = resultsData.origin.url
+                        name = resultsData.origin.originName,
+                        url = resultsData.origin.originUrl
                     ),
                     location = CharacterLocation(
-                        name = resultsData.location.name,
-                        url = resultsData.location.url
+                        name = resultsData.location.locationName,
+                        url = resultsData.location.locationUrl
                     ),
                     image = resultsData.image,
                     episode = resultsData.episode,
-                    url = resultsData.url,
+                    url = resultsData.characterUrl,
                     created = resultsData.created
                 )
             } as ArrayList<CharacterResults>,
