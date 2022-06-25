@@ -35,7 +35,7 @@ class LocationsMainViewModel @Inject constructor(
                 }
                 is ApiState.Error -> {
                     Log.e("EXCEPTION", data.exception.toString())
-                    _uiState.postValue(UiState.Error(Exception(data.exception)))
+                    _uiState.postValue(UiState.Error(Exception(data.exception.toString())))
                 }
             }
         }

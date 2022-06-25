@@ -3,7 +3,7 @@ package com.haberturm.rickandmorty.domain.common
 sealed class ApiState<out R>{
 
     data class Success<out T>(val data: T) : ApiState<T>()
-    data class Error(val exception: Exception) : ApiState<Nothing>()
+    data class Error(val exception: AppException) : ApiState<Nothing>()
 
     override fun toString(): String {
         return when (this) {

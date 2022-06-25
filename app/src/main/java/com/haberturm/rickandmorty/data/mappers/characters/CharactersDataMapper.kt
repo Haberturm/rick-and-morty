@@ -39,10 +39,10 @@ class CharactersDataMapper() : DataMapper() {
                 )
             } as ArrayList<CharacterResults>,
             info = CharactersInfo(
-                count = charactersData.info.count,
-                pages = charactersData.info.pages,
-                next = charactersData.info.next,
-                prev = charactersData.info.prev
+                count = charactersData.info.charactersCount,
+                pages = charactersData.info.charactersPages,
+                next = charactersData.info.charactersNext,
+                prev = charactersData.info.charactersPrev
             )
         ) as D
     }

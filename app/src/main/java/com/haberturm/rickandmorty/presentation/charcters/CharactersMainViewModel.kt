@@ -12,6 +12,8 @@ import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.mappers.characters.CharactersUiMapper
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -27,21 +29,29 @@ class CharactersMainViewModel @Inject constructor(
     fun getData() {
         viewModelScope.launch {
             _uiState.postValue(UiState.Loading)
-            when (val data = repository.getCharacters()) {
-                is ApiState.Success<Characters> -> {
-                    _uiState.postValue(
-                        UiState.Data(
-                            CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
-                                data.data
-                            )
-                        )
-                    )
+            repository.updateCharacters()
+                .onEach {
+                    repository.getCharacters()
+                        .onEach { data ->
+                            when (data) {
+                                is ApiState.Success<Characters> -> {
+                                    _uiState.postValue(
+                                        UiState.Data(
+                                            CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
+                                                data.data
+                                            )
+                                        )
+                                    )
+                                }
+                                is ApiState.Error -> {
+                                    Log.e("EXCEPTION", data.exception.toString())
+                                    _uiState.postValue(UiState.Error(Exception(data.exception.toString())))
+                                }
+                            }
+                        }.launchIn(this)
                 }
-                is ApiState.Error -> {
-                    Log.e("EXCEPTION", data.exception.toString())
-                    _uiState.postValue(UiState.Error(Exception(data.exception)))
-                }
-            }
+                .launchIn(this)
+
         }
     }
 
