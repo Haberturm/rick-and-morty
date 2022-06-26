@@ -1,10 +1,16 @@
 package com.haberturm.rickandmorty.data.repositories
 
-import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.db.RickAndMortyDatabase
 import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
+import com.haberturm.rickandmorty.data.entities.characters.CharactersInfoData
 import com.haberturm.rickandmorty.data.entities.characters.CharactersResponseData
+import com.haberturm.rickandmorty.data.entities.episodes.EpisodesInfoData
+import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResponseData
+import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResultsData
+import com.haberturm.rickandmorty.data.entities.locations.LocationResultsData
+import com.haberturm.rickandmorty.data.entities.locations.LocationsInfoData
+import com.haberturm.rickandmorty.data.entities.locations.LocationsResponseData
 import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.data.mappers.characters.CharactersDataMapper
 import com.haberturm.rickandmorty.data.mappers.episodes.EpisodesDataMapper
@@ -29,64 +35,27 @@ class RepositoryImpl @Inject constructor(
 ) : Repository {
 
     override suspend fun updateCharacters(): Flow<ApiState<Unit>> = flow {
-        val characterDao = database.characterDao()
-        val characterInfoDao = database.characterInfoDao()
-        try {
-            val response = RetrofitClient.retrofit.getCharacters()
-            if (response.isSuccessful) {
-                characterDao.insertAll(response.body()!!.results)
-                characterInfoDao.insertInfo(response.body()!!.info)
-                emit(
-                    ApiState.Success(Unit)
-                )
-            } else {
-                emit(
-                    ApiState.Error(
-                        AppException.NetworkException(response.raw().toString())
-                    )
-                )
-            }
-        } catch (e: Exception) {
-            if (e is UnknownHostException){
-                emit(
-                    ApiState.Error(
-                        AppException.NoInternetConnectionException(e.message.toString())
-                    )
-                )
-            }else{
-                emit(
-                    ApiState.Error(
-                        AppException.UnknownException(e.message.toString())
-                    )
-                )
-            }
-        }
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getCharacters() },
+                insertDataInDB = fun(data: ArrayList<CharacterResultsData>) {
+                    database.characterDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(info: CharactersInfoData) {
+                    database.characterInfoDao().insertInfo(info)
+                }
+            )
+        )
     }.flowOn(Dispatchers.IO)
 
-
     override suspend fun getCharacters(): Flow<ApiState<Characters>> = flow {
-        val characterDao = database.characterDao()
-        val characterInfoDao = database.characterInfoDao()
-        try {
-            val data2return = CharactersResponseData(
-                info = characterInfoDao.getCharactersInfo(),
-                results = characterDao.getCharactersInRange(
-                    1,
-                    20
-                ) as ArrayList<CharacterResultsData>
+        emit(
+            dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
+                mapper = CharactersDataMapper(),
+                localDataSource = { database.characterDao().getAllCharacters() },
+                localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
             )
-            emit(
-                ApiState.Success<Characters>(
-                    data = CharactersDataMapper().fromDataToDomain(data2return)
-                )
-            )
-        } catch (e: Exception) {
-            emit(
-                ApiState.Error(
-                    AppException.UnknownException(e.message.toString())
-                )
-            )
-        }
+        )
     }.flowOn(Dispatchers.IO)
 
     override suspend fun getLocations(): ApiState<Locations> =
@@ -104,6 +73,98 @@ class RepositoryImpl @Inject constructor(
                 mapper = EpisodesDataMapper()
             )
         }
+    
+    private suspend fun <D, T1, T2> updateState(
+        remoteDataSource: suspend () -> Response<D>,
+        insertDataInDB: (T1) -> Unit,
+        insertInfoDataInDB: (T2) -> Unit,
+    ): ApiState<Unit> {
+        try {
+            val response = remoteDataSource()
+            val data = response.body()
+            if (response.isSuccessful) {
+                when (data) { //need for smart cast (да-да, получилось немного костыльно:( )
+                    is CharactersResponseData -> {
+                        insertDataInDB(data.results as T1)
+                        insertInfoDataInDB(data.info as T2)
+                    }
+                    is LocationsResponseData -> {
+                        insertDataInDB(data.results as T1)
+                        insertInfoDataInDB(data.info as T2)
+                    }
+                    is EpisodesResponseData -> {
+                        insertDataInDB(data.results as T1)
+                        insertInfoDataInDB(data.info as T2)
+                    }
+                }
+                return ApiState.Success(Unit)
+            } else {
+                return ApiState.Error(
+                    AppException.NetworkException(response.raw().toString())
+                )
+            }
+        } catch (e: Exception) {
+            return if (e is UnknownHostException) { //в нашем случае(хост же у нас не поменяется, надеюсь:) )значит, что нет соединения с интернетом
+                ApiState.Error(
+                    AppException.NoInternetConnectionException(e.message.toString())
+                )
+
+            } else {
+                ApiState.Error(
+                    AppException.UnknownException(e.message.toString())
+                )
+            }
+        }
+    }
+
+    private inline fun <reified R, R1, R2> dataState(
+        mapper: DataMapper,
+        localDataSource: () -> R1,
+        localDataInfoSource: () -> R2,
+
+        ): ApiState<R> {
+        try {
+            when (R::class) {
+                Characters::class -> {
+                    val data2return = CharactersResponseData(
+                        info = localDataInfoSource() as CharactersInfoData,
+                        results = localDataSource() as ArrayList<CharacterResultsData>
+                    )
+                    return ApiState.Success(
+                        data = mapper.fromDataToDomain(data2return)
+                    )
+                }
+                Locations::class -> {
+                    val data2return = LocationsResponseData(
+                        info = localDataInfoSource() as LocationsInfoData,
+                        results = localDataSource() as ArrayList<LocationResultsData>
+                    )
+                    return ApiState.Success(
+                        data = mapper.fromDataToDomain(data2return)
+                    )
+                }
+                Episodes::class -> {
+                    val data2return = EpisodesResponseData(
+                        info = localDataInfoSource() as EpisodesInfoData,
+                        results = localDataSource() as ArrayList<EpisodesResultsData>
+                    )
+                    return ApiState.Success(
+                        data = mapper.fromDataToDomain(data2return)
+                    )
+                }
+                else -> {
+                    return ApiState.Error(
+                        AppException.UnknownException("WRONG TYPE IN dataState")
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            return ApiState.Error(
+                AppException.UnknownException(e.message.toString())
+            )
+        }
+    }
+
 
     private suspend fun <T, D> stateWrapper(
         getData: suspend () -> Response<D>,
