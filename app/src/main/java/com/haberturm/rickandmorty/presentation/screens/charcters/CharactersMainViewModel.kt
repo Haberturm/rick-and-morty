@@ -1,12 +1,12 @@
-package com.haberturm.rickandmorty.presentation.charcters
+package com.haberturm.rickandmorty.presentation.screens.charcters
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.haberturm.rickandmorty.data.repositories.RepositoryImpl
 import com.haberturm.rickandmorty.domain.common.ApiState
+import com.haberturm.rickandmorty.domain.common.AppException
 import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.presentation.common.UiState
@@ -26,11 +26,20 @@ class CharactersMainViewModel @Inject constructor(
     val uiState: LiveData<UiState<List<CharacterUi>>>
         get() = _uiState
 
+    /*
+    Изначально идет запрос на обновление данных из интернета. Обрабатывется возможная ошибка связанныя с отсутсвием интренета.
+    После обработки в ответа от сети, в любом случае отображаются даннные из бд(если они есть)
+     */
     fun getData() {
         viewModelScope.launch {
             _uiState.postValue(UiState.Loading)
             repository.updateCharacters()
-                .onEach {
+                .onEach { networkRequestState ->
+                    if (networkRequestState is ApiState.Error) {
+                        if (networkRequestState.exception is AppException.NoInternetConnectionException) {
+                            _uiState.postValue(UiState.Error(networkRequestState.exception))
+                        }
+                    }
                     repository.getCharacters()
                         .onEach { data ->
                             when (data) {
@@ -45,13 +54,12 @@ class CharactersMainViewModel @Inject constructor(
                                 }
                                 is ApiState.Error -> {
                                     Log.e("EXCEPTION", data.exception.toString())
-                                    _uiState.postValue(UiState.Error(Exception(data.exception.toString())))
+                                    _uiState.postValue(UiState.Error(data.exception))
                                 }
                             }
                         }.launchIn(this)
                 }
                 .launchIn(this)
-
         }
     }
 

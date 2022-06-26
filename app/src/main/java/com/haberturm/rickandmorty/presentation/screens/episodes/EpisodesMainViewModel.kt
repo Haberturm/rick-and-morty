@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.presentation.episodes
+package com.haberturm.rickandmorty.presentation.screens.episodes
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -6,13 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.haberturm.rickandmorty.domain.common.ApiState
-import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.presentation.common.UiState
-import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
-import com.haberturm.rickandmorty.presentation.mappers.characters.CharactersUiMapper
 import com.haberturm.rickandmorty.presentation.mappers.episodes.EpisodesUiMapper
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -41,7 +38,7 @@ class EpisodesMainViewModel @Inject constructor(
                 }
                 is ApiState.Error -> {
                     Log.e("EXCEPTION", data.exception.toString())
-                    _uiState.postValue(UiState.Error(Exception(data.exception.toString())))
+                    _uiState.postValue(UiState.Error(data.exception))
                 }
             }
         }

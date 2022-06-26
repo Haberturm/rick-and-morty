@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.presentation.locations
+package com.haberturm.rickandmorty.presentation.screens.locations
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -35,7 +35,7 @@ class LocationsMainViewModel @Inject constructor(
                 }
                 is ApiState.Error -> {
                     Log.e("EXCEPTION", data.exception.toString())
-                    _uiState.postValue(UiState.Error(Exception(data.exception.toString())))
+                    _uiState.postValue(UiState.Error(data.exception))
                 }
             }
         }

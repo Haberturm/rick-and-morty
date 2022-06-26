@@ -1,7 +1,6 @@
-package com.haberturm.rickandmorty.presentation.locations
+package com.haberturm.rickandmorty.presentation.screens.episodes
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,28 +8,27 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
-import com.haberturm.rickandmorty.databinding.FragmentLocationsMainBinding
+import com.haberturm.rickandmorty.databinding.FragmentEpisodesMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class LocationsMainFragment : DaggerFragment() {
-    private lateinit var locationsAdapter: LocationListAdapter
+class EpisodesMainFragment : DaggerFragment() {
+    private lateinit var episodesAdapter: EpisodesListAdapter
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-
-    private val viewModel: LocationsMainViewModel by lazy {
-        ViewModelProvider(requireActivity(), viewModelFactory)[LocationsMainViewModel::class.java]
+    private val viewModel: EpisodesMainViewModel by lazy {
+        ViewModelProvider(requireActivity(), viewModelFactory)[EpisodesMainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        locationsAdapter = LocationListAdapter(
-            listener = object : LocationListAdapter.ActionClickListener{
+        episodesAdapter = EpisodesListAdapter(
+            listener = object : EpisodesListAdapter.ActionClickListener{
                 override fun showDetail(id: Int) {
                     viewModel.showDetails()
                 }
@@ -45,10 +43,10 @@ class LocationsMainFragment : DaggerFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentLocationsMainBinding.inflate(inflater)
-        binding.locationList.apply {
+        val binding = FragmentEpisodesMainBinding.inflate(inflater)
+        binding.episodesList.apply {
             layoutManager = GridLayoutManager(requireContext(),2)
-            adapter = locationsAdapter
+            adapter = episodesAdapter
             addItemDecoration(
                 GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0)
             )
@@ -70,7 +68,7 @@ class LocationsMainFragment : DaggerFragment() {
                     is UiState.Data -> {
                         binding.loadingIndicator.visibility = View.GONE
                         binding.error.root.visibility = View.GONE
-                        locationsAdapter.submitUpdate(state.data)
+                        episodesAdapter.submitUpdate(state.data)
                     }
                 }
             }
@@ -78,6 +76,4 @@ class LocationsMainFragment : DaggerFragment() {
 
         return binding.root
     }
-
-
 }

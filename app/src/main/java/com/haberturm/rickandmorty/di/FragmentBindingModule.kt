@@ -1,8 +1,8 @@
 package com.haberturm.rickandmorty.di
 
-import com.haberturm.rickandmorty.presentation.charcters.CharactersMainFragment
-import com.haberturm.rickandmorty.presentation.episodes.EpisodesMainFragment
-import com.haberturm.rickandmorty.presentation.locations.LocationsMainFragment
+import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainFragment
+import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesMainFragment
+import com.haberturm.rickandmorty.presentation.screens.locations.LocationsMainFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

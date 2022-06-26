@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.presentation.episodes
+package com.haberturm.rickandmorty.presentation.screens.locations
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,25 +6,24 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.haberturm.rickandmorty.R
-import com.haberturm.rickandmorty.databinding.EpisodesItemBinding
-import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
+import com.haberturm.rickandmorty.databinding.LocationsItemBinding
+import com.haberturm.rickandmorty.presentation.entities.LocationUi
 
-
-class EpisodesListAdapter(
+class LocationListAdapter(
     private val listener: ActionClickListener,
     private val context: Context
 ) :
-    RecyclerView.Adapter<EpisodesListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<LocationListAdapter.ViewHolder>() {
 
-    private val episodes: ArrayList<EpisodeUi> = arrayListOf()
+    private val locations: ArrayList<LocationUi> = arrayListOf()
 
     override fun getItemCount(): Int {
-        return episodes.size
+        return locations.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ViewHolder {
         return ViewHolder(
-            EpisodesItemBinding.inflate(
+            LocationsItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -33,40 +32,40 @@ class EpisodesListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val episodes = episodes[position]
+        val location = locations[position]
         holder.itemView.setOnClickListener {
-            listener.showDetail(episodes.id)
+            listener.showDetail(location.id)
         }
-        holder.bind(episodes)
+        holder.bind(location)
     }
 
-    fun submitUpdate(update: List<EpisodeUi>) {
-        val callback = BooksDiffCallback(episodes, update)
+    fun submitUpdate(update: List<LocationUi>) {
+        val callback = BooksDiffCallback(locations, update)
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(callback)
 
-        episodes.clear()
-        episodes.addAll(update)
+        locations.clear()
+        locations.addAll(update)
         diffResult.dispatchUpdatesTo(this)
     }
 
     class ViewHolder(
-        private var binding: EpisodesItemBinding,
+        private var binding: LocationsItemBinding,
         private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(episode: EpisodeUi) {
-            binding.episodeName.text = episode.name
-            binding.episodeAdditional.text =
+        fun bind(location: LocationUi) {
+            binding.locationName.text = location.name
+            binding.locationAdditional.text =
                 context.resources.getString(
-                    R.string.episode_additional_template,
-                    episode.episode,
-                    episode.airDate
+                    R.string.location_additional_template,
+                    location.type,
+                    location.dimension
                 )
         }
     }
 
     class BooksDiffCallback(
-        private val oldCharacters: List<EpisodeUi>,
-        private val newCharacters: List<EpisodeUi>
+        private val oldCharacters: List<LocationUi>,
+        private val newCharacters: List<LocationUi>
     ) :
         DiffUtil.Callback() {
         override fun getOldListSize(): Int {

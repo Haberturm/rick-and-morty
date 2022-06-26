@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
@@ -33,15 +34,12 @@ class RepositoryImpl @Inject constructor(
         try {
             val response = RetrofitClient.retrofit.getCharacters()
             if (response.isSuccessful) {
-
                 characterDao.insertAll(response.body()!!.results)
                 characterInfoDao.insertInfo(response.body()!!.info)
-                Log.i("DATA2", "${response.body()!!.results}")
                 emit(
                     ApiState.Success(Unit)
                 )
             } else {
-                Log.i("DATA2", "${response.body()!!.results}")
                 emit(
                     ApiState.Error(
                         AppException.NetworkException(response.raw().toString())
@@ -49,12 +47,19 @@ class RepositoryImpl @Inject constructor(
                 )
             }
         } catch (e: Exception) {
-            Log.i("DATA2", "exception: $e")
-            emit(
-                ApiState.Error(
-                    AppException.UnknownException(e.message.toString())
+            if (e is UnknownHostException){
+                emit(
+                    ApiState.Error(
+                        AppException.NoInternetConnectionException(e.message.toString())
+                    )
                 )
-            )
+            }else{
+                emit(
+                    ApiState.Error(
+                        AppException.UnknownException(e.message.toString())
+                    )
+                )
+            }
         }
     }.flowOn(Dispatchers.IO)
 
@@ -63,10 +68,6 @@ class RepositoryImpl @Inject constructor(
         val characterDao = database.characterDao()
         val characterInfoDao = database.characterInfoDao()
         try {
-            Log.i("DATA2", "${characterDao.getCharactersInRange(
-                1,
-                20
-            )}")
             val data2return = CharactersResponseData(
                 info = characterInfoDao.getCharactersInfo(),
                 results = characterDao.getCharactersInRange(
@@ -87,38 +88,6 @@ class RepositoryImpl @Inject constructor(
             )
         }
     }.flowOn(Dispatchers.IO)
-
-    /*
-        override suspend fun getCharacters(): Flow<ApiState<Characters>> = flow{
-        val characterDao = database.characterDao()
-        val characterInfoDao = database.characterInfoDao()
-        try {
-            val response = RetrofitClient.retrofit.getCharacters()
-            if (response.isSuccessful){
-                characterDao.insertAll(response.body()!!.results)
-                characterInfoDao.insertInfo(response.body()!!.info)
-                val data2return = CharactersResponseData(
-                    info = characterInfoDao.getCharactersInfo(),
-                    results = characterDao.getCharactersInRange(1,20) as ArrayList<CharacterResultsData>
-                )
-                emit(
-                    ApiState.Success<Characters>(data = CharactersDataMapper().fromDataToDomain(data2return))
-                )
-            }else{
-                emit(
-                    ApiState.Error(
-                        AppException.NetworkException(response.raw().toString())
-                    )
-                )
-            }
-        }catch (e: Exception){
-            emit(ApiState.Error(
-                AppException.UnknownException(e.message.toString())
-            ))
-        }
-    }.flowOn(Dispatchers.IO)
-
-     */
 
     override suspend fun getLocations(): ApiState<Locations> =
         withContext(Dispatchers.IO) {
