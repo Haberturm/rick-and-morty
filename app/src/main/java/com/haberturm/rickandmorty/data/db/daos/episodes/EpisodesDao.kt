@@ -16,5 +16,5 @@ interface EpisodesDao {
     fun insertAll(episodes: ArrayList<EpisodesResultsData>)
 
     @Query("SELECT * FROM episode WHERE id >= :lowerBound AND id <= :upperBound")
-    fun getCharactersInRange(lowerBound: Int, upperBound: Int): List<EpisodesResultsData>
+    fun getEpisodesInRange(lowerBound: Int, upperBound: Int): List<EpisodesResultsData>
 }
