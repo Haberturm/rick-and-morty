@@ -66,13 +66,30 @@ class RepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun getEpisodes(): ApiState<Episodes> =
-        withContext(Dispatchers.IO) {
-            return@withContext stateWrapper(
-                getData = { RetrofitClient.retrofit.getEpisodes() },
-                mapper = EpisodesDataMapper()
+    override suspend fun updateEpisodes(): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getEpisodes() },
+                insertDataInDB = fun(data: ArrayList<EpisodesResultsData>) {
+                    database.episodesDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(info: EpisodesInfoData) {
+                    database.episodesInfoDao().insertInfo(info)
+                }
             )
-        }
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getEpisodes(): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
+        emit(
+            dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
+                mapper = EpisodesDataMapper(),
+                localDataSource = { database.episodesDao().getAllEpisodes() },
+                localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
 
     private suspend fun <D, T1, T2> updateState(
         remoteDataSource: suspend () -> Response<D>,
@@ -121,7 +138,7 @@ class RepositoryImpl @Inject constructor(
         mapper: DataMapper,
         localDataSource: () -> R1,
         localDataInfoSource: () -> R2,
-        ): ApiState<R> {
+    ): ApiState<R> {
         try {
             when (R::class) {
                 Characters::class -> {

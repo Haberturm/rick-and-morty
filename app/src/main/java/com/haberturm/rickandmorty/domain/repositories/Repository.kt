@@ -12,7 +12,10 @@ interface Repository {
     suspend fun getCharacters(): Flow<ApiState<Characters>>
     suspend fun updateCharacters(): Flow<ApiState<Unit>>
 
+
     suspend fun getLocations(): ApiState<Locations>
-    suspend fun getEpisodes(): ApiState<Episodes>
+
+    suspend fun updateEpisodes(): Flow<ApiState<Unit>>
+    suspend fun getEpisodes(): Flow<ApiState<Episodes>>
 
 }

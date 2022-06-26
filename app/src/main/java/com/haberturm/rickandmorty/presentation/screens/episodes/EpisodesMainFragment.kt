@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentEpisodesMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
+import com.haberturm.rickandmorty.domain.common.AppException
+import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 import dagger.android.support.DaggerFragment
@@ -60,9 +62,15 @@ class EpisodesMainFragment : DaggerFragment() {
                     }
                     is UiState.Error -> {
                         binding.loadingIndicator.visibility = View.GONE
-                        binding.error.root.visibility = View.VISIBLE
-                        binding.error.errorRefreshButton.setOnClickListener {
-                            viewModel.getData()
+                        if (state.exception is AppException.NoInternetConnectionException){
+                            val alertDialogFragment = AlertDialogFragment()
+                            val manager = parentFragmentManager
+                            alertDialogFragment.show(manager,"NO_INTERNET")
+                        }else{
+                            binding.error.root.visibility = View.VISIBLE
+                            binding.error.errorRefreshButton.setOnClickListener {
+                                viewModel.getData()
+                            }
                         }
                     }
                     is UiState.Data -> {

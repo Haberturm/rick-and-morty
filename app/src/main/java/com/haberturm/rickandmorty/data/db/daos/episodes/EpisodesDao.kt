@@ -13,7 +13,7 @@ interface EpisodesDao {
     fun getAllEpisodes(): List<EpisodesResultsData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(episodes: ArrayList<CharacterResultsData>)
+    fun insertAll(episodes: ArrayList<EpisodesResultsData>)
 
     @Query("SELECT * FROM episode WHERE id >= :lowerBound AND id <= :upperBound")
     fun getCharactersInRange(lowerBound: Int, upperBound: Int): List<EpisodesResultsData>
