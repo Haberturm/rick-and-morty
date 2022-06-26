@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.data.db.daos
+package com.haberturm.rickandmorty.data.db.daos.characters
 
 import androidx.room.Dao
 import androidx.room.Insert

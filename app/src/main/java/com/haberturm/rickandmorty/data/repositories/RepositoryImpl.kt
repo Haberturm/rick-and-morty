@@ -73,7 +73,7 @@ class RepositoryImpl @Inject constructor(
                 mapper = EpisodesDataMapper()
             )
         }
-    
+
     private suspend fun <D, T1, T2> updateState(
         remoteDataSource: suspend () -> Response<D>,
         insertDataInDB: (T1) -> Unit,
@@ -121,7 +121,6 @@ class RepositoryImpl @Inject constructor(
         mapper: DataMapper,
         localDataSource: () -> R1,
         localDataInfoSource: () -> R2,
-
         ): ApiState<R> {
         try {
             when (R::class) {
