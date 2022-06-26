@@ -58,13 +58,29 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getLocations(): ApiState<Locations> =
-        withContext(Dispatchers.IO) {
-            return@withContext stateWrapper(
-                getData = { RetrofitClient.retrofit.getLocations() },
-                mapper = LocationsDataMapper()
+    override suspend fun updateLocations(): Flow<ApiState<Unit>> = flow {
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getLocations() },
+                insertDataInDB = fun(data: ArrayList<LocationResultsData>) {
+                    database.locationsDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(info: LocationsInfoData) {
+                    database.locationsInfoDao().insertInfo(info)
+                }
             )
-        }
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getLocations(): Flow<ApiState<Locations>> = flow {
+        emit(
+            dataState<Locations, List<LocationResultsData>, LocationsInfoData>(
+                mapper = LocationsDataMapper(),
+                localDataSource = { database.locationsDao().getAllLocations() },
+                localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun updateEpisodes(): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
@@ -176,27 +192,6 @@ class RepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             return ApiState.Error(
-                AppException.UnknownException(e.message.toString())
-            )
-        }
-    }
-
-
-    private suspend fun <T, D> stateWrapper(
-        getData: suspend () -> Response<D>,
-        mapper: DataMapper
-    ): ApiState<T> {
-        return try {
-            val response = getData()
-            if (response.isSuccessful) {
-                ApiState.Success(mapper.fromDataToDomain(response.body()))
-            } else {
-                ApiState.Error(
-                    AppException.NetworkException(response.raw().toString())
-                )
-            }
-        } catch (e: Exception) {
-            ApiState.Error(
                 AppException.UnknownException(e.message.toString())
             )
         }

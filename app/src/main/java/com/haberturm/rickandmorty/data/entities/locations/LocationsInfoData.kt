@@ -10,7 +10,7 @@ data class LocationsInfoData (
   val key: Int = 1,
   @SerializedName("count" ) var count : Int,
   @SerializedName("pages" ) var pages : Int,
-  @SerializedName("next"  ) var next  : String,
-  @SerializedName("prev"  ) var prev  : String
+  @SerializedName("next"  ) var next  : String?,
+  @SerializedName("prev"  ) var prev  : String?
 
 )
