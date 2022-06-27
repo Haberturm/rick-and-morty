@@ -12,6 +12,7 @@ import com.haberturm.rickandmorty.databinding.FragmentEpisodesMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.domain.common.AppException
 import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
+import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 import dagger.android.support.DaggerFragment
@@ -22,6 +23,8 @@ class EpisodesMainFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private val listFragmentMethods = ListFragmentMethods()
 
     private val viewModel: EpisodesMainViewModel by lazy {
         ViewModelProvider(requireActivity(), viewModelFactory)[EpisodesMainViewModel::class.java]
@@ -46,42 +49,30 @@ class EpisodesMainFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentEpisodesMainBinding.inflate(inflater)
-        binding.episodesList.apply {
-            layoutManager = GridLayoutManager(requireContext(),2)
-            adapter = episodesAdapter
-            addItemDecoration(
-                GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0)
-            )
-        }
-        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
-            if (state != null) {
-                when (state) {
-                    UiState.Loading -> {
-                        binding.loadingIndicator.visibility = View.VISIBLE
-                        binding.error.root.visibility = View.GONE
-                    }
-                    is UiState.Error -> {
-                        binding.loadingIndicator.visibility = View.GONE
-                        if (state.exception is AppException.NoInternetConnectionException){
-                            val alertDialogFragment = AlertDialogFragment()
-                            val manager = parentFragmentManager
-                            alertDialogFragment.show(manager,"NO_INTERNET")
-                        }else{
-                            binding.error.root.visibility = View.VISIBLE
-                            binding.error.errorRefreshButton.setOnClickListener {
-                                viewModel.getData()
-                            }
-                        }
-                    }
-                    is UiState.Data -> {
-                        binding.loadingIndicator.visibility = View.GONE
-                        binding.error.root.visibility = View.GONE
-                        episodesAdapter.submitUpdate(state.data)
-                    }
-                }
-            }
-        })
 
+        listFragmentMethods.recyclerViewTooling(
+            recyclerView = binding.episodesList,
+            manager = GridLayoutManager(requireContext(),2),
+            decorator = GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0),
+            recyclerViewAdapter = episodesAdapter
+        )
+
+        listFragmentMethods.swipeToRefreshListener(
+            swipeRefreshLayout = binding.swipeRefreshLayout,
+            onRefreshAction = {viewModel.getData()}  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        )
+
+        listFragmentMethods.stateObserver(
+            lifecycleOwner = viewLifecycleOwner,
+            state = viewModel.uiState,
+            recyclerView = binding.episodesList,
+            recyclerViewAdapter = episodesAdapter,
+            loadingIndicator = binding.loadingIndicator,
+            errorView = binding.error,
+            errorRefreshAction = {viewModel.getData()},
+            fragmentManager = parentFragmentManager,
+        )
+        
         return binding.root
     }
 }

@@ -64,6 +64,7 @@ class CharactersMainFragment : DaggerFragment() {
             decorator = GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.small_margin) , true, 0),
             recyclerViewAdapter = charactersAdapter
         )
+
         listFragmentMethods.swipeToRefreshListener(
             swipeRefreshLayout = binding.swipeRefreshLayout,
             onRefreshAction = {viewModel.getData()}  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
@@ -79,7 +80,7 @@ class CharactersMainFragment : DaggerFragment() {
             errorRefreshAction = {viewModel.getData()},
             fragmentManager = parentFragmentManager,
         )
-        
+
         return binding.root
     }
 }
