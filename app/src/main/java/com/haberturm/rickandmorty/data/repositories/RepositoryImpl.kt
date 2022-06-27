@@ -106,7 +106,6 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-
     private suspend fun <D, T1, T2> updateState(
         remoteDataSource: suspend () -> Response<D>,
         insertDataInDB: (T1) -> Unit,

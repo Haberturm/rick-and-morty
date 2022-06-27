@@ -4,16 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.haberturm.rickandmorty.R
+import com.haberturm.rickandmorty.databinding.ErrorLayoutBinding
 import com.haberturm.rickandmorty.databinding.FragmentCharactersMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.domain.common.AppException
+import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
+import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
+import com.haberturm.rickandmorty.presentation.entities.CharacterUi
+import com.haberturm.rickandmorty.presentation.entities.LocationUi
+import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesListAdapter
+import com.haberturm.rickandmorty.presentation.screens.locations.LocationListAdapter
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -22,6 +31,8 @@ class CharactersMainFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private val listFragmentMethods = ListFragmentMethods()
 
     private val viewModel: CharactersMainViewModel by lazy {
         ViewModelProvider(requireActivity(), viewModelFactory)[CharactersMainViewModel::class.java]
@@ -46,43 +57,29 @@ class CharactersMainFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentCharactersMainBinding.inflate(inflater)
-        binding.charactersList.apply {
-            layoutManager = GridLayoutManager(requireContext(),2)
-            adapter = charactersAdapter
-            addItemDecoration(
-                GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.small_margin) , true, 0)
-            )
-        }
 
-        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
-            if (state != null) {
-                when (state) {
-                    UiState.Loading -> {
-                        binding.loadingIndicator.visibility = View.VISIBLE
-                        binding.error.root.visibility = View.GONE
-                    }
-                    is UiState.Error -> {
-                        binding.loadingIndicator.visibility = View.GONE
-                        if (state.exception is AppException.NoInternetConnectionException){
-                            val alertDialogFragment = AlertDialogFragment()
-                            val manager = parentFragmentManager
-                            alertDialogFragment.show(manager,"NO_INTERNET")
-                        }else{
-                            binding.error.root.visibility = View.VISIBLE
-                            binding.error.errorRefreshButton.setOnClickListener {
-                                viewModel.getData()
-                            }
-                        }
-                    }
-                    is UiState.Data -> {
-                        binding.loadingIndicator.visibility = View.GONE
-                        binding.error.root.visibility = View.GONE
-                        charactersAdapter.submitUpdate(state.data)
-                    }
-                }
-            }
-        })
+        listFragmentMethods.recyclerViewTooling(
+            recyclerView = binding.charactersList,
+            manager = GridLayoutManager(requireContext(),2),
+            decorator = GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.small_margin) , true, 0),
+            recyclerViewAdapter = charactersAdapter
+        )
+        listFragmentMethods.swipeToRefreshListener(
+            swipeRefreshLayout = binding.swipeRefreshLayout,
+            onRefreshAction = {viewModel.getData()}  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        )
 
+        listFragmentMethods.stateObserver(
+            lifecycleOwner = viewLifecycleOwner,
+            state = viewModel.uiState,
+            recyclerView = binding.charactersList,
+            recyclerViewAdapter = charactersAdapter,
+            loadingIndicator = binding.loadingIndicator,
+            errorView = binding.error,
+            errorRefreshAction = {viewModel.getData()},
+            fragmentManager = parentFragmentManager,
+        )
+        
         return binding.root
     }
 }
