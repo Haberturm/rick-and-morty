@@ -1,5 +1,6 @@
 package com.haberturm.rickandmorty.data.repositories
 
+import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.db.RickAndMortyDatabase
 import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
@@ -48,6 +49,7 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+
     override suspend fun getCharacters(): Flow<ApiState<Characters>> = flow {
         emit(
             dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
@@ -57,6 +59,50 @@ class RepositoryImpl @Inject constructor(
             )
         )
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun getFilteredCharacters(
+        name: String,
+        status: String,
+        species: String,
+        type: String,
+        gender: String
+    ): Flow<ApiState<Characters>> = flow {
+        emit(
+            dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
+                mapper = CharactersDataMapper(),
+                localDataSource = {
+                    database.characterDao().getFilteredCharacters(
+                        name = name,
+                        status = status,
+                        species = species,
+                        type = type,
+                        gender = gender
+
+                    )
+                },
+                localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+//    suspend fun filterCharacters() {
+//        withContext(Dispatchers.IO) {
+//            val dao = database.characterDao()
+//            val res = dao.getFilteredCharacters(
+//                name = "Al",
+//                status = "unknown",
+//                species = "Alie",
+//            )
+//
+//            res.forEach {
+//                Log.i(
+//                    "DBRETURN",
+//                    "${it.id}, ${it.name}, ${it.status}, ${it.species}, ${it.type}, ${it.gender}"
+//                )
+//            }
+//
+//        }
+//    }
 
     override suspend fun updateLocations(): Flow<ApiState<Unit>> = flow {
         emit(

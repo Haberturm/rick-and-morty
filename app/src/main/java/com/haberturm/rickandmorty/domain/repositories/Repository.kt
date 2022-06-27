@@ -11,6 +11,13 @@ import kotlinx.coroutines.flow.Flow
 interface Repository {
     suspend fun getCharacters(): Flow<ApiState<Characters>>
     suspend fun updateCharacters(): Flow<ApiState<Unit>>
+    suspend fun getFilteredCharacters(
+        name: String,
+        status: String,
+        species: String,
+        type: String,
+        gender: String
+    ): Flow<ApiState<Characters>>
 
     suspend fun updateLocations(): Flow<ApiState<Unit>>
     suspend fun getLocations(): Flow<ApiState<Locations>>

@@ -26,6 +26,10 @@ class CharactersMainViewModel @Inject constructor(
     val uiState: LiveData<UiState<List<CharacterUi>>>
         get() = _uiState
 
+    init {
+        getFilteredData()
+    }
+
     /*
     Изначально идет запрос на обновление данных из интернета. Обрабатывется возможная ошибка связанныя с отсутсвием интренета.
     После обработки в ответа от сети, в любом случае отображаются даннные из бд(если они есть)
@@ -60,6 +64,21 @@ class CharactersMainViewModel @Inject constructor(
                         }.launchIn(this)
                 }
                 .launchIn(this)
+        }
+    }
+
+    fun getFilteredData(){
+        _uiState.value = UiState.Loading
+        viewModelScope.launch {
+            repository.getFilteredCharacters(
+                name = "Al",
+                status = "unknown",
+                species = "Alie",
+                type = "",
+                gender = ""
+            ).onEach {
+                Log.i("FILTERED", it.toString())
+            }.launchIn(this)
         }
     }
 
