@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.presentation.charcters
+package com.haberturm.rickandmorty.presentation.screens.episodes
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,69 +6,67 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.haberturm.rickandmorty.R
-import com.haberturm.rickandmorty.databinding.CharactersItemBinding
-import com.haberturm.rickandmorty.presentation.entities.CharacterUi
-import com.haberturm.rickandmorty.util.loadImage
+import com.haberturm.rickandmorty.databinding.EpisodesItemBinding
+import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
 
-class CharacterListAdapter(
+
+class EpisodesListAdapter(
     private val listener: ActionClickListener,
     private val context: Context
 ) :
-    RecyclerView.Adapter<CharacterListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<EpisodesListAdapter.ViewHolder>() {
 
-    private val characters: ArrayList<CharacterUi> = arrayListOf()
+    private val episodes: ArrayList<EpisodeUi> = arrayListOf()
 
     override fun getItemCount(): Int {
-        return characters.size
+        return episodes.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ViewHolder {
         return ViewHolder(
-            CharactersItemBinding.inflate(
+            EpisodesItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ),
-            context
+            ), context
         )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val character = characters[position]
+        val episodes = episodes[position]
         holder.itemView.setOnClickListener {
-            listener.showDetail(character.id)
+            listener.showDetail(episodes.id)
         }
-        holder.bind(character)
+        holder.bind(episodes)
     }
 
-    fun submitUpdate(update: List<CharacterUi>) {
-        val callback = BooksDiffCallback(characters, update)
+    fun submitUpdate(update: List<EpisodeUi>) {
+        val callback = BooksDiffCallback(episodes, update)
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(callback)
 
-        characters.clear()
-        characters.addAll(update)
+        episodes.clear()
+        episodes.addAll(update)
         diffResult.dispatchUpdatesTo(this)
     }
 
     class ViewHolder(
-        private var binding: CharactersItemBinding,
+        private var binding: EpisodesItemBinding,
         private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(character: CharacterUi) {
-            binding.characterName.text = character.name
-            binding.characterImage.loadImage(character.image)
-            binding.characterAdditional.text = context.resources.getString(
-                R.string.character_additional_template,
-                character.species,
-                character.gender,
-                character.status
-            )
+        fun bind(episode: EpisodeUi) {
+            binding.episodeName.text = episode.name
+            binding.episodeAdditional.text =
+                context.resources.getString(
+                    R.string.episode_additional_template,
+                    episode.episode,
+                    episode.airDate
+                )
         }
     }
 
     class BooksDiffCallback(
-        private val oldCharacters: List<CharacterUi>,
-        private val newCharacters: List<CharacterUi>
+        private val oldCharacters: List<EpisodeUi>,
+        private val newCharacters: List<EpisodeUi>
     ) :
         DiffUtil.Callback() {
         override fun getOldListSize(): Int {
@@ -84,7 +82,7 @@ class CharacterListAdapter(
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldCharacters[oldItemPosition].status == newCharacters[newItemPosition].status
+            return oldCharacters[oldItemPosition].id == newCharacters[newItemPosition].id
         }
     }
 

@@ -12,14 +12,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/location_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:itemCount="10"
-            tools:layoutManager="GridLayoutManager"
-            tools:listitem="@layout/locations_item"
-            tools:spanCount="2" />
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/location_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:itemCount="10"
+                tools:layoutManager="GridLayoutManager"
+                tools:listitem="@layout/locations_item"
+                tools:spanCount="2" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/loading_indicator"
@@ -31,8 +38,7 @@
         <include
             android:id="@+id/error"
             layout="@layout/error_layout"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
     </FrameLayout>
 

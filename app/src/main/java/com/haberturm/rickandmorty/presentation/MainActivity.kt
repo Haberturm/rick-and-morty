@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.ActivityMainBinding
-import com.haberturm.rickandmorty.presentation.charcters.CharactersMainFragment
-import com.haberturm.rickandmorty.presentation.episodes.EpisodesMainFragment
-import com.haberturm.rickandmorty.presentation.locations.LocationsMainFragment
+import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainFragment
+import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesMainFragment
+import com.haberturm.rickandmorty.presentation.screens.locations.LocationsMainFragment
 import com.haberturm.rickandmorty.util.Const.FRAGMENT_KEY
 import dagger.android.support.DaggerAppCompatActivity
 

@@ -23,7 +23,5 @@ interface AppComponent : AndroidInjector<RickAndMortyApp> {
     }
 }
 
-@Module(includes = [DataModule::class, ViewModelModule::class, ActivityBindingModule::class])
-class AppModule
 
 

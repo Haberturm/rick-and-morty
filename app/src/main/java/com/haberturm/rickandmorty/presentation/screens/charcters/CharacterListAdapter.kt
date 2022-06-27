@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.presentation.locations
+package com.haberturm.rickandmorty.presentation.screens.charcters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,66 +6,69 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.haberturm.rickandmorty.R
-import com.haberturm.rickandmorty.databinding.LocationsItemBinding
-import com.haberturm.rickandmorty.presentation.entities.LocationUi
+import com.haberturm.rickandmorty.databinding.CharactersItemBinding
+import com.haberturm.rickandmorty.presentation.entities.CharacterUi
+import com.haberturm.rickandmorty.util.loadImage
 
-class LocationListAdapter(
+class CharacterListAdapter(
     private val listener: ActionClickListener,
     private val context: Context
 ) :
-    RecyclerView.Adapter<LocationListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<CharacterListAdapter.ViewHolder>() {
 
-    private val locations: ArrayList<LocationUi> = arrayListOf()
+    private val characters: ArrayList<CharacterUi> = arrayListOf()
 
     override fun getItemCount(): Int {
-        return locations.size
+        return characters.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ViewHolder {
         return ViewHolder(
-            LocationsItemBinding.inflate(
+            CharactersItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), context
+            ),
+            context
         )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val location = locations[position]
+        val character = characters[position]
         holder.itemView.setOnClickListener {
-            listener.showDetail(location.id)
+            listener.showDetail(character.id)
         }
-        holder.bind(location)
+        holder.bind(character)
     }
 
-    fun submitUpdate(update: List<LocationUi>) {
-        val callback = BooksDiffCallback(locations, update)
+    fun submitUpdate(update: List<CharacterUi>) {
+        val callback = BooksDiffCallback(characters, update)
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(callback)
 
-        locations.clear()
-        locations.addAll(update)
+        characters.clear()
+        characters.addAll(update)
         diffResult.dispatchUpdatesTo(this)
     }
 
     class ViewHolder(
-        private var binding: LocationsItemBinding,
+        private var binding: CharactersItemBinding,
         private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(location: LocationUi) {
-            binding.locationName.text = location.name
-            binding.locationAdditional.text =
-                context.resources.getString(
-                    R.string.location_additional_template,
-                    location.type,
-                    location.dimension
-                )
+        fun bind(character: CharacterUi) {
+            binding.characterName.text = character.name
+            binding.characterImage.loadImage(character.image)
+            binding.characterAdditional.text = context.resources.getString(
+                R.string.character_additional_template,
+                character.species,
+                character.gender,
+                character.status
+            )
         }
     }
 
     class BooksDiffCallback(
-        private val oldCharacters: List<LocationUi>,
-        private val newCharacters: List<LocationUi>
+        private val oldCharacters: List<CharacterUi>,
+        private val newCharacters: List<CharacterUi>
     ) :
         DiffUtil.Callback() {
         override fun getOldListSize(): Int {
@@ -81,7 +84,7 @@ class LocationListAdapter(
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldCharacters[oldItemPosition].id == newCharacters[newItemPosition].id
+            return oldCharacters[oldItemPosition].status == newCharacters[newItemPosition].status
         }
     }
 

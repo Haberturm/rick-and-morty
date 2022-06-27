@@ -5,10 +5,12 @@ import com.haberturm.rickandmorty.domain.repositories.Repository
 import dagger.Binds
 import dagger.Module
 
-@Module
+@Module(includes = [DataBaseModule::class])
 interface DataModule {
+
     @Binds
     fun bindRepositoryToRepositoryImpl(
         newsRepositoryImpl: RepositoryImpl
     ): Repository
+
 }
