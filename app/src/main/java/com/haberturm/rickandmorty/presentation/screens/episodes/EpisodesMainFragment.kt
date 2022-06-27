@@ -72,7 +72,7 @@ class EpisodesMainFragment : DaggerFragment() {
             errorRefreshAction = {viewModel.getData()},
             fragmentManager = parentFragmentManager,
         )
-        
+
         return binding.root
     }
 }

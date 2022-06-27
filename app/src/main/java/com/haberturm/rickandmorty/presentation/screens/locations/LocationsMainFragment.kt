@@ -12,6 +12,7 @@ import com.haberturm.rickandmorty.databinding.FragmentLocationsMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.domain.common.AppException
 import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
+import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 import dagger.android.support.DaggerFragment
@@ -23,6 +24,7 @@ class LocationsMainFragment : DaggerFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    private val listFragmentMethods = ListFragmentMethods()
 
     private val viewModel: LocationsMainViewModel by lazy {
         ViewModelProvider(requireActivity(), viewModelFactory)[LocationsMainViewModel::class.java]
@@ -31,7 +33,7 @@ class LocationsMainFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         locationsAdapter = LocationListAdapter(
-            listener = object : LocationListAdapter.ActionClickListener{
+            listener = object : LocationListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
                     viewModel.showDetails()
                 }
@@ -47,44 +49,35 @@ class LocationsMainFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentLocationsMainBinding.inflate(inflater)
-        binding.locationList.apply {
-            layoutManager = GridLayoutManager(requireContext(),2)
-            adapter = locationsAdapter
-            addItemDecoration(
-                GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0)
-            )
-        }
-        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
-            if (state != null) {
-                when (state) {
-                    UiState.Loading -> {
-                        binding.loadingIndicator.visibility = View.VISIBLE
-                        binding.error.root.visibility = View.GONE
-                    }
-                    is UiState.Error -> {
-                        binding.loadingIndicator.visibility = View.GONE
-                        if (state.exception is AppException.NoInternetConnectionException){
-                            val alertDialogFragment = AlertDialogFragment()
-                            val manager = parentFragmentManager
-                            alertDialogFragment.show(manager,"NO_INTERNET")
-                        }else{
-                            binding.error.root.visibility = View.VISIBLE
-                            binding.error.errorRefreshButton.setOnClickListener {
-                                viewModel.getData()
-                            }
-                        }
-                    }
-                    is UiState.Data -> {
-                        binding.loadingIndicator.visibility = View.GONE
-                        binding.error.root.visibility = View.GONE
-                        locationsAdapter.submitUpdate(state.data)
-                    }
-                }
-            }
-        })
+
+        listFragmentMethods.recyclerViewTooling(
+            recyclerView = binding.locationList,
+            manager = GridLayoutManager(requireContext(), 2),
+            decorator = GridSpacingItemDecoration(
+                spanCount = 2,
+                spacing = resources.getDimensionPixelSize(R.dimen.default_margin),
+                includeEdge = true,
+                headerNum = 0
+            ),
+            recyclerViewAdapter = locationsAdapter
+        )
+
+        listFragmentMethods.swipeToRefreshListener(
+            swipeRefreshLayout = binding.swipeRefreshLayout,
+            onRefreshAction = { viewModel.getData() }  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        )
+
+        listFragmentMethods.stateObserver(
+            lifecycleOwner = viewLifecycleOwner,
+            state = viewModel.uiState,
+            recyclerView = binding.locationList,
+            recyclerViewAdapter = locationsAdapter,
+            loadingIndicator = binding.loadingIndicator,
+            errorView = binding.error,
+            errorRefreshAction = { viewModel.getData() },
+            fragmentManager = parentFragmentManager,
+        )
 
         return binding.root
     }
-
-
 }
