@@ -44,7 +44,8 @@ class CharactersFilterFragment : DaggerFragment() {
             onItemSelected = fun(position: Int){
                 viewModel.genderPositionChanger(position)
             },
-            selectedPosition = viewModel.genderPosition.value!!
+            selectedPositionState = viewModel.genderPosition,
+            lifecycleOwner = viewLifecycleOwner
         )
 
         setUpDropDownMenu(
@@ -58,7 +59,8 @@ class CharactersFilterFragment : DaggerFragment() {
                 viewModel.statusPositionChanger(position)
 
             },
-            selectedPosition = viewModel.statusPosition.value!!
+            selectedPositionState = viewModel.statusPosition,
+            lifecycleOwner = viewLifecycleOwner
         )
 
         setUpFilterEditText(
@@ -97,6 +99,10 @@ class CharactersFilterFragment : DaggerFragment() {
             viewModel.getFilteredData()
         }
 
+        binding.clearFiltersButton.setOnClickListener {
+            viewModel.clearFilters()
+        }
+
         return binding.root
     }
 }
@@ -105,11 +111,14 @@ fun setUpDropDownMenu(
     menu: AutoCompleteTextView,
     adapter: ArrayAdapter<String>,
     onItemSelected: (Int) -> Unit,
-    selectedPosition: Int
+    selectedPositionState: LiveData<Int>,
+    lifecycleOwner: LifecycleOwner
 ){
     menu.apply {
         setAdapter(adapter)
-        setText(adapter.getItem(selectedPosition).toString(), false)
+        selectedPositionState.observe(lifecycleOwner){
+            setText(adapter.getItem(it).toString(), false)
+        }
         setOnItemClickListener { _, _, position, _ ->
             onItemSelected(position)
         }

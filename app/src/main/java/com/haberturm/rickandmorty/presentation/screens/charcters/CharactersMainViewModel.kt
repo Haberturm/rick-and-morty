@@ -96,10 +96,10 @@ class CharactersMainViewModel @Inject constructor(
         }
     }
 
-    private fun makeReturnFormat(string: String?): String?{
-        return if(string == "Not specified"){
+    private fun makeReturnFormat(string: String?): String? {
+        return if (string == "Not specified") {
             ""
-        }else{
+        } else {
             string
         }
     }
@@ -109,7 +109,10 @@ class CharactersMainViewModel @Inject constructor(
 
 
         viewModelScope.launch {
-            Log.i("REQUEST", "${nameText.value ?: ""}; ${statusText.value ?: ""}, ${speciesText.value ?: ""}, ${typeText.value ?: ""}; ${genderText.value ?: ""}")
+            Log.i(
+                "REQUEST",
+                "${nameText.value ?: ""}; ${statusText.value ?: ""}, ${speciesText.value ?: ""}, ${typeText.value ?: ""}; ${genderText.value ?: ""}"
+            )
             repository.getFilteredCharacters(
                 name = nameText.value ?: "",
                 status = makeReturnFormat(statusText.value) ?: "",
@@ -159,6 +162,13 @@ class CharactersMainViewModel @Inject constructor(
         _genderText.value = genderItems[genderPosition.value!!]
     }
 
+    fun clearFilters() {
+        _genderPosition.value = 0
+        _statusPosition.value = 0
+        _nameText.value = ""
+        _speciesText.value = ""
+        _typeText.value = ""
+    }
 
     fun showDetails() {
 
