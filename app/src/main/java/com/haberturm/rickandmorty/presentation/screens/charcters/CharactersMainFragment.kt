@@ -59,7 +59,7 @@ class CharactersMainFragment : DaggerFragment() {
         val binding = FragmentCharactersMainBinding.inflate(inflater)
 
         listFragmentMethods.openFiltersButtonClickListener(
-            button = binding.navButton,
+            button = binding.filtersButton,
             navManager = parentFragmentManager,
             filterFragment = CharactersFilterFragment(),
             fragmentLabel = "CHARACTERS_FILTER"

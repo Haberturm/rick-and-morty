@@ -1,31 +1,29 @@
-package com.haberturm.rickandmorty.presentation.screens.charcters
+package com.haberturm.rickandmorty.presentation.screens.locations
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.EditText
-import android.widget.TextView
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentCharactersFilterBinding
+import com.haberturm.rickandmorty.databinding.FragmentLocationsFilterBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.presentation.common.FiltersMethods
+import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainViewModel
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class CharactersFilterFragment : DaggerFragment() {
+
+class LocationsFilterFragment : DaggerFragment() {
+
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: CharactersMainViewModel by lazy {
-        ViewModelProvider(requireActivity(), viewModelFactory)[CharactersMainViewModel::class.java]
+    private val viewModel: LocationsMainViewModel by lazy {
+        ViewModelProvider(requireActivity(), viewModelFactory)[LocationsMainViewModel::class.java]
     }
 
     private val filtersMethods = FiltersMethods()
@@ -35,36 +33,7 @@ class CharactersFilterFragment : DaggerFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentCharactersFilterBinding.inflate(inflater)
-
-        filtersMethods.setUpDropDownMenu(
-            menu = (binding.genderMenu.editText as AutoCompleteTextView),
-            adapter = ArrayAdapter(
-                requireContext(),
-                R.layout.filter_dropdown_item,
-                viewModel.genderItems
-            ),
-            onItemSelected = fun(position: Int){
-                viewModel.genderPositionChanger(position)
-            },
-            selectedPositionState = viewModel.genderPosition,
-            lifecycleOwner = viewLifecycleOwner
-        )
-
-        filtersMethods.setUpDropDownMenu(
-            menu = (binding.statusMenu.editText as AutoCompleteTextView),
-            adapter = ArrayAdapter(
-                requireContext(),
-                R.layout.filter_dropdown_item,
-                viewModel.statusItems
-            ),
-            onItemSelected = fun(position: Int){
-                viewModel.statusPositionChanger(position)
-
-            },
-            selectedPositionState = viewModel.statusPosition,
-            lifecycleOwner = viewLifecycleOwner
-        )
+        val binding = FragmentLocationsFilterBinding.inflate(inflater)
 
         filtersMethods.setUpFilterEditText(
             editText = binding.nameEdit,
@@ -76,11 +45,11 @@ class CharactersFilterFragment : DaggerFragment() {
         )
 
         filtersMethods.setUpFilterEditText(
-            editText = binding.speciesEdit,
+            editText = binding.dimensionEdit,
             onTextChanged = fun(text: CharSequence?){
-                viewModel.speciesTextChanger(text)
+                viewModel.dimensionTextChanger(text)
             },
-            textState = viewModel.speciesText,
+            textState = viewModel.dimensionText,
             lifecycleOwner = viewLifecycleOwner
         )
 
@@ -108,6 +77,6 @@ class CharactersFilterFragment : DaggerFragment() {
 
         return binding.root
     }
+
+
 }
-
-

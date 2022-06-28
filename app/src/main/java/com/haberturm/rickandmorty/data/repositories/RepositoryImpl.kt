@@ -109,6 +109,22 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+    override suspend fun getFilteredLocations(
+        name: String,
+        dimension: String,
+        type: String
+    ): Flow<ApiState<Locations>> = flow {
+        emit(dataState<Locations, List<LocationResultsData>, LocationsInfoData>(
+            mapper = LocationsDataMapper(),
+            localDataSource = { database.locationsDao().getFilteredLocations(
+                name = name,
+                dimension = dimension,
+                type = type
+            ) },
+            localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
+        ))
+    }.flowOn(Dispatchers.IO)
+
     override suspend fun updateEpisodes(): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
             updateState(

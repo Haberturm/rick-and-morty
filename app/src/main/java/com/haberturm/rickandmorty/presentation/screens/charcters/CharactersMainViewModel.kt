@@ -106,13 +106,7 @@ class CharactersMainViewModel @Inject constructor(
 
     fun getFilteredData() {
         _uiState.value = UiState.Loading
-
-
         viewModelScope.launch {
-            Log.i(
-                "REQUEST",
-                "${nameText.value ?: ""}; ${statusText.value ?: ""}, ${speciesText.value ?: ""}, ${typeText.value ?: ""}; ${genderText.value ?: ""}"
-            )
             repository.getFilteredCharacters(
                 name = nameText.value ?: "",
                 status = makeReturnFormat(statusText.value) ?: "",

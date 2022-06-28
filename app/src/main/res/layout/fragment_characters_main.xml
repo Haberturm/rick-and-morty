@@ -7,11 +7,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <Button
-        android:id="@+id/nav_button"
+        android:id="@+id/filters_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Open Filters"/>
+        android:text="@string/filters_button_text"/>
 
     <FrameLayout
         android:layout_width="match_parent"

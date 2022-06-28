@@ -7,12 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.haberturm.rickandmorty.domain.common.ApiState
 import com.haberturm.rickandmorty.domain.common.AppException
+import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.presentation.common.UiState
+import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
 import com.haberturm.rickandmorty.presentation.entities.LocationUi
+import com.haberturm.rickandmorty.presentation.mappers.characters.CharactersUiMapper
 import com.haberturm.rickandmorty.presentation.mappers.episodes.EpisodesUiMapper
 import com.haberturm.rickandmorty.presentation.mappers.locations.LocationsUiMapper
 import kotlinx.coroutines.flow.launchIn
@@ -29,6 +32,21 @@ class LocationsMainViewModel @Inject constructor(
     val uiState: LiveData<UiState<List<LocationUi>>>
         get() = _uiState
 
+    private val _nameText = MutableLiveData<String>("")
+    val nameText: LiveData<String>
+        get() = _nameText
+
+    private val _dimensionText = MutableLiveData<String>("")
+    val dimensionText: LiveData<String>
+        get() = _dimensionText
+
+    private val _typeText = MutableLiveData<String>("")
+    val typeText: LiveData<String>
+        get() = _typeText
+
+    init {
+        getData()
+    }
 
     fun getData(){
         viewModelScope.launch {
@@ -62,6 +80,57 @@ class LocationsMainViewModel @Inject constructor(
                 }
                 .launchIn(this)
         }
+    }
+
+
+    fun getFilteredData() {
+        _uiState.value = UiState.Loading
+        viewModelScope.launch {
+            repository.getFilteredLocations(
+                name = nameText.value ?: "",
+                type = typeText.value ?: "",
+                dimension = dimensionText.value ?: ""
+            ).onEach { data ->
+                when (data) {
+                    is ApiState.Success<Locations> -> {
+                        _uiState.postValue(
+                            UiState.Data(
+                                LocationsUiMapper().fromDomainToUi<Locations, List<LocationUi>>(
+                                    data.data
+                                )
+                            )
+                        )
+                    }
+                    is ApiState.Error -> {
+                        Log.e("EXCEPTION", data.exception.toString())
+                        _uiState.postValue(UiState.Error(data.exception))
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+    fun nameTextChanger(text: CharSequence?) {
+        _nameText.value = text?.toString()
+    }
+
+    fun typeTextChanger(text: CharSequence?) {
+        _typeText.value = text?.toString()
+    }
+
+    fun dimensionTextChanger(text: CharSequence?) {
+        _dimensionText.value = text?.toString()
+    }
+
+    fun clearFilters() {
+        _nameText.value = ""
+        _dimensionText.value = ""
+        _typeText.value = ""
+    }
+
+    fun refreshData(){
+        getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        clearFilters()
     }
 
     fun showDetails(){
