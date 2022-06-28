@@ -41,7 +41,7 @@ class CharactersMainFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         charactersAdapter = CharacterListAdapter(
-            listener = object : CharacterListAdapter.ActionClickListener{
+            listener = object : CharacterListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
                     viewModel.showDetails()
                 }
@@ -67,14 +67,19 @@ class CharactersMainFragment : DaggerFragment() {
 
         listFragmentMethods.recyclerViewTooling(
             recyclerView = binding.charactersList,
-            manager = GridLayoutManager(requireContext(),2),
-            decorator = GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.small_margin) , true, 0),
+            manager = GridLayoutManager(requireContext(), 2),
+            decorator = GridSpacingItemDecoration(
+                2,
+                resources.getDimensionPixelSize(R.dimen.small_margin),
+                true,
+                0
+            ),
             recyclerViewAdapter = charactersAdapter
         )
 
         listFragmentMethods.swipeToRefreshListener(
             swipeRefreshLayout = binding.swipeRefreshLayout,
-            onRefreshAction = {viewModel.getData()}  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+            onRefreshAction = { viewModel.refreshData() }
         )
 
         listFragmentMethods.stateObserver(
@@ -84,7 +89,7 @@ class CharactersMainFragment : DaggerFragment() {
             recyclerViewAdapter = charactersAdapter,
             loadingIndicator = binding.loadingIndicator,
             errorView = binding.error,
-            errorRefreshAction = {viewModel.getData()},
+            errorRefreshAction = { viewModel.getData() },
             fragmentManager = parentFragmentManager,
         )
 

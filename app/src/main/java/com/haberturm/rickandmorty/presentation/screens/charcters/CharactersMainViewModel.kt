@@ -170,6 +170,11 @@ class CharactersMainViewModel @Inject constructor(
         _typeText.value = ""
     }
 
+    fun refreshData(){
+        getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        clearFilters()
+    }
+
     fun showDetails() {
 
     }
