@@ -73,10 +73,10 @@ class RepositoryImpl @Inject constructor(
                 localDataSource = {
                     database.characterDao().getFilteredCharacters(
                         name = name,
-                        status = status,
+                        status = status.ifEmpty { "%" },
                         species = species,
                         type = type,
-                        gender = gender
+                        gender = gender.ifEmpty { "%" }
 
                     )
                 },

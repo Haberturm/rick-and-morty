@@ -20,16 +20,16 @@ interface CharactersDao {
 
     @Query("SELECT * FROM character WHERE " +
             "name LIKE '%' || :name || '%' AND " +
-            "status LIKE '%' || :status || '%' AND " +
+            "status LIKE :status AND " +
             "species LIKE '%' || :species || '%' AND " +
             "type LIKE '%' || :type || '%' AND " +
-            "gender LIKE '%' || :gender || '%'")
+            "gender LIKE :gender")
     fun getFilteredCharacters(
-        name: String = "",
-        status:String = "",
-        species: String = "",
-        type: String = "",
-        gender: String = ""
+        name: String,
+        status:String,
+        species: String,
+        type: String,
+        gender: String
     ): List<CharacterResultsData>
 
 }
