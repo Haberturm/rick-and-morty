@@ -48,7 +48,7 @@ class CharactersMainFragment : DaggerFragment() {
             },
             context = requireContext()
         )
-        viewModel.getData()
+        //viewModel.getData()
     }
 
     override fun onCreateView(

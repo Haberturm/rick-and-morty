@@ -15,15 +15,14 @@
         android:layout_height="wrap_content"
         android:text="Close Filters" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/name_search_view"
+    <EditText
+        android:id="@+id/name_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
-        android:background="@color/light_grey_background"
-        android:iconifiedByDefault="false"
-        app:iconifiedByDefault="false"
-        app:queryHint="Enter character name..." />
+        android:hint="Enter character name..."
+        />
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/status_menu"
@@ -39,25 +38,21 @@
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/species_search_view"
+    <EditText
+        android:id="@+id/species_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
-        android:background="@color/light_grey_background"
-        android:iconifiedByDefault="false"
-        app:iconifiedByDefault="false"
-        app:queryHint="Enter character species..." />
+        android:hint="Enter character species..."
+        />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/type_search_view"
+    <EditText
+        android:id="@+id/type_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
-        android:background="@color/light_grey_background"
-        android:iconifiedByDefault="false"
-        app:iconifiedByDefault="false"
-        app:queryHint="Enter character type..." />
+        android:hint="Enter character type..."
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/gender_menu"

@@ -38,14 +38,26 @@ class CharactersMainViewModel @Inject constructor(
         get() = _typeText
 
     val statusItems = listOf("Not specified", "Alive", "Dead", "Unknown")
-    private val _statusText = MutableLiveData<String>(statusItems[0])
+    private val _statusPosition = MutableLiveData<Int>(0)
+    val statusPosition: LiveData<Int>
+        get() = _statusPosition
+    private val _statusText = MutableLiveData<String>(statusItems[statusPosition.value!!])
     val statusText: LiveData<String>
         get() = _statusText
 
+
     val genderItems = listOf("Not specified", "Female", "Male", "Genderless", "Unknown")
+    private val _genderPosition = MutableLiveData<Int>(0)
+    val genderPosition: LiveData<Int>
+        get() = _genderPosition
     private val _genderText = MutableLiveData<String>(genderItems[0])
     val genderText: LiveData<String>
         get() = _genderText
+
+    init {
+        Log.i("ROTATION", "vm init")
+        getData()
+    }
 
     /*
     Изначально идет запрос на обновление данных из интернета. Обрабатывется возможная ошибка связанныя с отсутсвием интренета.
@@ -125,24 +137,26 @@ class CharactersMainViewModel @Inject constructor(
     }
 
 
-    fun speciesTextChanger(text: String?) {
-        _speciesText.value = text
+    fun speciesTextChanger(text: CharSequence?) {
+        _speciesText.value = text?.toString()
     }
 
-    fun typeTextChanger(text: String?) {
-        _typeText.value = text
+    fun typeTextChanger(text: CharSequence?) {
+        _typeText.value = text?.toString()
     }
 
-    fun nameTextChanger(text: String?) {
-        _nameText.value = text
+    fun nameTextChanger(text: CharSequence?) {
+        _nameText.value = text?.toString()
     }
 
-    fun statusTextChanger(text: String) {
-        _statusText.value = text
+    fun statusPositionChanger(position: Int) {
+        _statusPosition.value = position
+        _statusText.value = statusItems[statusPosition.value!!]
     }
 
-    fun genderTextChanger(text: String?) {
-        _genderText.value = text
+    fun genderPositionChanger(position: Int) {
+        _genderPosition.value = position
+        _genderText.value = genderItems[genderPosition.value!!]
     }
 
 
