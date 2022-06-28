@@ -58,6 +58,13 @@ class CharactersMainFragment : DaggerFragment() {
     ): View? {
         val binding = FragmentCharactersMainBinding.inflate(inflater)
 
+        listFragmentMethods.openFiltersButtonClickListener(
+            button = binding.navButton,
+            navManager = parentFragmentManager,
+            filterFragment = CharactersFilterFragment(),
+            fragmentLabel = "CHARACTERS_FILTER"
+        )
+
         listFragmentMethods.recyclerViewTooling(
             recyclerView = binding.charactersList,
             manager = GridLayoutManager(requireContext(),2),

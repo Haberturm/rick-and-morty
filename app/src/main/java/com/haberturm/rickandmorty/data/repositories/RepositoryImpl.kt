@@ -85,25 +85,6 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-//    suspend fun filterCharacters() {
-//        withContext(Dispatchers.IO) {
-//            val dao = database.characterDao()
-//            val res = dao.getFilteredCharacters(
-//                name = "Al",
-//                status = "unknown",
-//                species = "Alie",
-//            )
-//
-//            res.forEach {
-//                Log.i(
-//                    "DBRETURN",
-//                    "${it.id}, ${it.name}, ${it.status}, ${it.species}, ${it.type}, ${it.gender}"
-//                )
-//            }
-//
-//        }
-//    }
-
     override suspend fun updateLocations(): Flow<ApiState<Unit>> = flow {
         emit(
             updateState(

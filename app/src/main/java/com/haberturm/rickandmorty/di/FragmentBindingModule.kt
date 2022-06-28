@@ -1,5 +1,6 @@
 package com.haberturm.rickandmorty.di
 
+import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainFragment
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesMainFragment
 import com.haberturm.rickandmorty.presentation.screens.locations.LocationsMainFragment
@@ -19,5 +20,9 @@ interface FragmentBindingModule {
     @FragmentScoped
     @ContributesAndroidInjector
     fun episodesMainFragment(): EpisodesMainFragment
+
+    @FragmentScoped
+    @ContributesAndroidInjector
+    fun charactersFilterFragment(): CharactersFilterFragment
 
 }

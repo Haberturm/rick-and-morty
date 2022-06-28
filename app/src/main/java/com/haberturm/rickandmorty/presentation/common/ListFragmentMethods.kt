@@ -1,6 +1,8 @@
 package com.haberturm.rickandmorty.presentation.common
 
 import android.view.View
+import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -8,12 +10,14 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.ErrorLayoutBinding
 import com.haberturm.rickandmorty.domain.common.AppException
 import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
 import com.haberturm.rickandmorty.presentation.entities.LocationUi
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharacterListAdapter
+import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesListAdapter
 import com.haberturm.rickandmorty.presentation.screens.locations.LocationListAdapter
 
@@ -93,5 +97,21 @@ class ListFragmentMethods {
                 }
             }
         })
+    }
+
+    fun openFiltersButtonClickListener(
+        button: Button,
+        navManager: FragmentManager,
+        filterFragment: Fragment,
+        fragmentLabel: String
+    ){
+        button.setOnClickListener {
+            val ft = navManager.beginTransaction()
+            ft.apply {
+                replace(R.id.fragment_container, filterFragment)
+                addToBackStack(fragmentLabel)
+                commit()
+            }
+        }
     }
 }
