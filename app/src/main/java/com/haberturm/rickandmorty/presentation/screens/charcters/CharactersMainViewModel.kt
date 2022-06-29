@@ -98,8 +98,8 @@ class CharactersMainViewModel @Inject constructor(
             repository.updateCharacters(page)
                 .onEach { networkRequestState ->
                     if (networkRequestState is ApiState.Error) {
+                        Log.e("EXCEPTION-network", networkRequestState.exception.toString())
                         if (networkRequestState.exception is AppException.NoInternetConnectionException) {
-                            Log.e("EXCEPTION-network", networkRequestState.exception.toString())
                             _uiState.postValue(UiState.Error(networkRequestState.exception))
                         }
                     }
@@ -112,7 +112,7 @@ class CharactersMainViewModel @Inject constructor(
                                         Log.e("EXCEPTION", "EMPTY_PAGE")
                                         _uiState.postValue(
                                             UiState.Error(
-                                                AppException.UnknownException(
+                                                AppException.UnknownException(   //todo: сделать отдельную ошибку на случай пустой бд
                                                     "EMPTY_PAGE"
                                                 )
                                             )
@@ -219,6 +219,7 @@ class CharactersMainViewModel @Inject constructor(
 
     fun clearFilters() {
         filtersApplied = false
+        _currentPage.value = 1
         _genderPosition.value = 0
         _statusPosition.value = 0
         _nameText.value = ""

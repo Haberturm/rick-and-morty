@@ -20,8 +20,8 @@ interface Repository {
         gender: String
     ): Flow<ApiState<Characters>>
 
-    suspend fun updateLocations(): Flow<ApiState<Unit>>
-    suspend fun getLocations(): Flow<ApiState<Locations>>
+    suspend fun updateLocations(page: Int): Flow<ApiState<Unit>>
+    suspend fun getLocations(page: Int): Flow<ApiState<Locations>>
     suspend fun getFilteredLocations(
         name: String,
         dimension: String,

@@ -69,9 +69,6 @@ class RepositoryImpl @Inject constructor(
         type: String,
         gender: String
     ): Flow<ApiState<Characters>> = flow {
-        val page = 1
-        val upperBound = page * Const.ITEMS_PER_PAGE
-        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
                 mapper = CharactersDataMapper(),
@@ -89,10 +86,10 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun updateLocations(): Flow<ApiState<Unit>> = flow {
+    override suspend fun updateLocations(page: Int): Flow<ApiState<Unit>> = flow {
         emit(
             updateState(
-                remoteDataSource = { RetrofitClient.retrofit.getLocations() },
+                remoteDataSource = { RetrofitClient.retrofit.getLocations(page) },
                 insertDataInDB = fun(data: ArrayList<LocationResultsData>) {
                     database.locationsDao().insertAll(data)
                 },
@@ -103,11 +100,13 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getLocations(): Flow<ApiState<Locations>> = flow {
+    override suspend fun getLocations(page: Int): Flow<ApiState<Locations>> = flow {
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Locations, List<LocationResultsData>, LocationsInfoData>(
                 mapper = LocationsDataMapper(),
-                localDataSource = { database.locationsDao().getAllLocations() },
+                localDataSource = { database.locationsDao().getLocationsInRange(lowerBound, upperBound) },
                 localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
             )
         )
