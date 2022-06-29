@@ -128,10 +128,10 @@ class RepositoryImpl @Inject constructor(
         ))
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun updateEpisodes(): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
+    override suspend fun updateEpisodes(page: Int): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
             updateState(
-                remoteDataSource = { RetrofitClient.retrofit.getEpisodes() },
+                remoteDataSource = { RetrofitClient.retrofit.getEpisodes(page) },
                 insertDataInDB = fun(data: ArrayList<EpisodesResultsData>) {
                     database.episodesDao().insertAll(data)
                 },
@@ -142,11 +142,13 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getEpisodes(): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
+    override suspend fun getEpisodes(page: Int): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
                 mapper = EpisodesDataMapper(),
-                localDataSource = { database.episodesDao().getAllEpisodes() },
+                localDataSource = { database.episodesDao().getEpisodesInRange(lowerBound, upperBound) },
                 localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
             )
         )

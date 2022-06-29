@@ -28,8 +28,8 @@ interface Repository {
         type: String
     ): Flow<ApiState<Locations>>
 
-    suspend fun updateEpisodes(): Flow<ApiState<Unit>>
-    suspend fun getEpisodes(): Flow<ApiState<Episodes>>
+    suspend fun updateEpisodes(page: Int): Flow<ApiState<Unit>>
+    suspend fun getEpisodes(page: Int): Flow<ApiState<Episodes>>
     suspend fun getFilteredEpisodes(
         name: String,
         episodes: String

@@ -16,5 +16,5 @@ interface RickAndMortyApi {
     suspend fun getLocations(@Query("page") page:Int): Response<LocationsResponseData>
 
     @GET(AllApi.EPISODES)
-    suspend fun getEpisodes(): Response<EpisodesResponseData>
+    suspend fun getEpisodes(@Query("page") page:Int): Response<EpisodesResponseData>
 }

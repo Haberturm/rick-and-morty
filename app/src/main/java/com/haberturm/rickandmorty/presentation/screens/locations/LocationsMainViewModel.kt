@@ -51,7 +51,7 @@ class LocationsMainViewModel @Inject constructor(
         get() = _currentPage
 
 
-    private val _maxPages = MutableLiveData<Int>(42)
+    private val _maxPages = MutableLiveData<Int>(7)
     val maxPages: LiveData<Int>
         get() = _maxPages
 

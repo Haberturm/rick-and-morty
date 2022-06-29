@@ -60,11 +60,9 @@ class CharactersMainViewModel @Inject constructor(
     val currentPage: LiveData<Int>
         get() = _currentPage
 
-
     private val _maxPages = MutableLiveData<Int>(42)
     val maxPages: LiveData<Int>
         get() = _maxPages
-
 
     private val _jumpToPageEditState =
         MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка

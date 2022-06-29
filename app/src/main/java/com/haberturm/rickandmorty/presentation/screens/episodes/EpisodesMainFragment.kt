@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentEpisodesMainBinding
@@ -51,6 +52,26 @@ class EpisodesMainFragment : DaggerFragment() {
     ): View? {
         val binding = FragmentEpisodesMainBinding.inflate(inflater)
 
+        viewModel.currentPage.observe(viewLifecycleOwner){ currentPage ->
+            viewModel.maxPages.observe(viewLifecycleOwner){ maxPages ->
+                binding.pageHeaderText.text = getString(R.string.page_header_text,currentPage, maxPages)
+            }
+        }
+
+        listFragmentMethods.setUpPagePicker(
+            pagePicker = binding.pagePicker,
+            onNextPage = { viewModel.nextPage() },
+            onPreviousPage = { viewModel.previousPage() },
+            jumpToPage = fun(pageText: CharSequence){
+                viewModel.jumpToPage(pageText)
+            },
+            jumpToPageState = viewModel.jumpToPageEditState,
+            previousPageState = viewModel.previousPageState,
+            nextPageState = viewModel.nextPageState,
+            lifecycleOwner = viewLifecycleOwner,
+            context = requireContext()
+        )
+
         listFragmentMethods.recyclerViewTooling(
             recyclerView = binding.episodesList,
             manager = GridLayoutManager(requireContext(),2),
@@ -67,7 +88,7 @@ class EpisodesMainFragment : DaggerFragment() {
 
         listFragmentMethods.swipeToRefreshListener(
             swipeRefreshLayout = binding.swipeRefreshLayout,
-            onRefreshAction = {viewModel.getData()}  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+            onRefreshAction = {viewModel.refreshData()}
         )
 
         listFragmentMethods.stateObserver(

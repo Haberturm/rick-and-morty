@@ -66,9 +66,7 @@ class CharactersMainFragment : DaggerFragment() {
             viewModel.maxPages.observe(viewLifecycleOwner){ maxPages ->
                 binding.pageHeaderText.text = getString(R.string.page_header_text,currentPage, maxPages)
             }
-
         }
-
 
         listFragmentMethods.setUpPagePicker(
             pagePicker = binding.pagePicker,
