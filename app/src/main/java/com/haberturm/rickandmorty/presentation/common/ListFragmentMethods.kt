@@ -2,6 +2,7 @@ package com.haberturm.rickandmorty.presentation.common
 
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
@@ -97,6 +98,18 @@ class ListFragmentMethods {
                 }
             }
         })
+    }
+
+    fun setUpPagePicker(
+        currentPageState: LiveData<Int>,
+        lifecycleOwner: LifecycleOwner,
+        previousPageButton: Button,
+        nextPageButton: Button,
+        jumpToPageEditText: EditText,
+    ){
+        currentPageState.observe(lifecycleOwner){
+            
+        }
     }
 
     fun openFiltersButtonClickListener(

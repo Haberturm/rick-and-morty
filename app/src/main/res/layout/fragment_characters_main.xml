@@ -13,6 +13,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/filters_button_text" />
+    <include
+        android:id="@+id/page_picker"
+        layout="@layout/page_picker"
+        android:layout_gravity="bottom"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -32,6 +38,8 @@
                 tools:listitem="@layout/characters_item"
                 tools:spanCount="2" />
 
+
+
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -45,6 +53,9 @@
             android:id="@+id/error"
             layout="@layout/error_layout"
             android:visibility="gone" />
+
+
+
     </FrameLayout>
 
 

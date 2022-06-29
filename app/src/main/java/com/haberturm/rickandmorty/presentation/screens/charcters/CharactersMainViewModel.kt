@@ -54,8 +54,11 @@ class CharactersMainViewModel @Inject constructor(
     val genderText: LiveData<String>
         get() = _genderText
 
+    private val _currentPage = MutableLiveData<Int>(1)
+    val currentPage: LiveData<Int>
+        get() = _currentPage
+
     init {
-        Log.i("ROTATION", "vm init")
         getData()
     }
 
@@ -164,7 +167,7 @@ class CharactersMainViewModel @Inject constructor(
         _typeText.value = ""
     }
 
-    fun refreshData(){
+    fun refreshData() {
         getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
         clearFilters()
     }
