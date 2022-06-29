@@ -53,7 +53,6 @@ class CharactersMainFragment : DaggerFragment() {
             },
             context = requireContext()
         )
-        //viewModel.getData()
     }
 
     override fun onCreateView(
@@ -62,7 +61,15 @@ class CharactersMainFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentCharactersMainBinding.inflate(inflater)
-        
+
+        viewModel.currentPage.observe(viewLifecycleOwner){ currentPage ->
+            viewModel.maxPages.observe(viewLifecycleOwner){ maxPages ->
+                binding.pageHeaderText.text = getString(R.string.page_header_text,currentPage, maxPages)
+            }
+
+        }
+
+
         listFragmentMethods.setUpPagePicker(
             pagePicker = binding.pagePicker,
             onNextPage = { viewModel.nextPage() },

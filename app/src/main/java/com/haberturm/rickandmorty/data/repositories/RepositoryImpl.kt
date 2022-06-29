@@ -69,6 +69,9 @@ class RepositoryImpl @Inject constructor(
         type: String,
         gender: String
     ): Flow<ApiState<Characters>> = flow {
+        val page = 1
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
                 mapper = CharactersDataMapper(),
@@ -79,7 +82,6 @@ class RepositoryImpl @Inject constructor(
                         species = species,
                         type = type,
                         gender = gender.ifEmpty { "%" }
-
                     )
                 },
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
