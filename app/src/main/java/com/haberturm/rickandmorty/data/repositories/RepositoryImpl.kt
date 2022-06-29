@@ -1,5 +1,6 @@
 package com.haberturm.rickandmorty.data.repositories
 
+import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.db.RickAndMortyDatabase
 import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
@@ -48,11 +49,37 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+
     override suspend fun getCharacters(): Flow<ApiState<Characters>> = flow {
         emit(
             dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
                 mapper = CharactersDataMapper(),
                 localDataSource = { database.characterDao().getAllCharacters() },
+                localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getFilteredCharacters(
+        name: String,
+        status: String,
+        species: String,
+        type: String,
+        gender: String
+    ): Flow<ApiState<Characters>> = flow {
+        emit(
+            dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
+                mapper = CharactersDataMapper(),
+                localDataSource = {
+                    database.characterDao().getFilteredCharacters(
+                        name = name,
+                        status = status.ifEmpty { "%" },
+                        species = species,
+                        type = type,
+                        gender = gender.ifEmpty { "%" }
+
+                    )
+                },
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
             )
         )
@@ -82,6 +109,22 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+    override suspend fun getFilteredLocations(
+        name: String,
+        dimension: String,
+        type: String
+    ): Flow<ApiState<Locations>> = flow {
+        emit(dataState<Locations, List<LocationResultsData>, LocationsInfoData>(
+            mapper = LocationsDataMapper(),
+            localDataSource = { database.locationsDao().getFilteredLocations(
+                name = name,
+                dimension = dimension,
+                type = type
+            ) },
+            localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
+        ))
+    }.flowOn(Dispatchers.IO)
+
     override suspend fun updateEpisodes(): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
             updateState(
@@ -101,6 +144,19 @@ class RepositoryImpl @Inject constructor(
             dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
                 mapper = EpisodesDataMapper(),
                 localDataSource = { database.episodesDao().getAllEpisodes() },
+                localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getFilteredEpisodes(name: String, episodes: String) = flow {
+        emit(
+            dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
+                mapper = EpisodesDataMapper(),
+                localDataSource = { database.episodesDao().getFilteredEpisodes(
+                    name = name,
+                    episodes = episodes
+                ) },
                 localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
             )
         )

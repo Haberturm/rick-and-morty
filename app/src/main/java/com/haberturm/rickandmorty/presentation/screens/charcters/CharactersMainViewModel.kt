@@ -15,7 +15,6 @@ import com.haberturm.rickandmorty.presentation.mappers.characters.CharactersUiMa
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 class CharactersMainViewModel @Inject constructor(
@@ -25,6 +24,40 @@ class CharactersMainViewModel @Inject constructor(
     private val _uiState = MutableLiveData<UiState<List<CharacterUi>>>(null)
     val uiState: LiveData<UiState<List<CharacterUi>>>
         get() = _uiState
+
+    private val _nameText = MutableLiveData<String>("")
+    val nameText: LiveData<String>
+        get() = _nameText
+
+    private val _speciesText = MutableLiveData<String>("")
+    val speciesText: LiveData<String>
+        get() = _speciesText
+
+    private val _typeText = MutableLiveData<String>("")
+    val typeText: LiveData<String>
+        get() = _typeText
+
+    val statusItems = listOf("Not specified", "Alive", "Dead", "Unknown")
+    private val _statusPosition = MutableLiveData<Int>(0)
+    val statusPosition: LiveData<Int>
+        get() = _statusPosition
+    private val _statusText = MutableLiveData<String>(statusItems[statusPosition.value!!])
+    val statusText: LiveData<String>
+        get() = _statusText
+
+
+    val genderItems = listOf("Not specified", "Female", "Male", "Genderless", "Unknown")
+    private val _genderPosition = MutableLiveData<Int>(0)
+    val genderPosition: LiveData<Int>
+        get() = _genderPosition
+    private val _genderText = MutableLiveData<String>(genderItems[0])
+    val genderText: LiveData<String>
+        get() = _genderText
+
+    init {
+        Log.i("ROTATION", "vm init")
+        getData()
+    }
 
     /*
     Изначально идет запрос на обновление данных из интернета. Обрабатывется возможная ошибка связанныя с отсутсвием интренета.
@@ -63,6 +96,78 @@ class CharactersMainViewModel @Inject constructor(
         }
     }
 
+    private fun makeReturnFormat(string: String?): String? {
+        return if (string == "Not specified") {
+            ""
+        } else {
+            string
+        }
+    }
+
+    fun getFilteredData() {
+        _uiState.value = UiState.Loading
+        viewModelScope.launch {
+            repository.getFilteredCharacters(
+                name = nameText.value ?: "",
+                status = makeReturnFormat(statusText.value) ?: "",
+                species = speciesText.value ?: "",
+                type = typeText.value ?: "",
+                gender = makeReturnFormat(genderText.value) ?: ""
+            ).onEach { data ->
+                when (data) {
+                    is ApiState.Success<Characters> -> {
+                        _uiState.postValue(
+                            UiState.Data(
+                                CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
+                                    data.data
+                                )
+                            )
+                        )
+                    }
+                    is ApiState.Error -> {
+                        Log.e("EXCEPTION", data.exception.toString())
+                        _uiState.postValue(UiState.Error(data.exception))
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+
+    fun speciesTextChanger(text: CharSequence?) {
+        _speciesText.value = text?.toString()
+    }
+
+    fun typeTextChanger(text: CharSequence?) {
+        _typeText.value = text?.toString()
+    }
+
+    fun nameTextChanger(text: CharSequence?) {
+        _nameText.value = text?.toString()
+    }
+
+    fun statusPositionChanger(position: Int) {
+        _statusPosition.value = position
+        _statusText.value = statusItems[statusPosition.value!!]
+    }
+
+    fun genderPositionChanger(position: Int) {
+        _genderPosition.value = position
+        _genderText.value = genderItems[genderPosition.value!!]
+    }
+
+    fun clearFilters() {
+        _genderPosition.value = 0
+        _statusPosition.value = 0
+        _nameText.value = ""
+        _speciesText.value = ""
+        _typeText.value = ""
+    }
+
+    fun refreshData(){
+        getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        clearFilters()
+    }
 
     fun showDetails() {
 

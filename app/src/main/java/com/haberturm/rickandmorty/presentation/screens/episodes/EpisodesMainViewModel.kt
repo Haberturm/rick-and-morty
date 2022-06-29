@@ -29,6 +29,14 @@ class EpisodesMainViewModel @Inject constructor(
     val uiState: LiveData<UiState<List<EpisodeUi>>>
         get() = _uiState
 
+    private val _nameText = MutableLiveData<String>("")
+    val nameText: LiveData<String>
+        get() = _nameText
+
+    private val _episodesText = MutableLiveData<String>("")
+    val episodesText: LiveData<String>
+        get() = _episodesText
+
     fun getData() {
         viewModelScope.launch {
             _uiState.postValue(UiState.Loading)
@@ -60,6 +68,46 @@ class EpisodesMainViewModel @Inject constructor(
                 }
                 .launchIn(this)
         }
+    }
+
+
+    fun getFilteredData() {
+        _uiState.value = UiState.Loading
+        viewModelScope.launch {
+            repository.getFilteredEpisodes(
+                name = nameText.value ?: "",
+                episodes = episodesText.value ?: "",
+            ).onEach { data ->
+                when (data) {
+                    is ApiState.Success<Episodes> -> {
+                        _uiState.postValue(
+                            UiState.Data(
+                                EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
+                                    data.data
+                                )
+                            )
+                        )
+                    }
+                    is ApiState.Error -> {
+                        Log.e("EXCEPTION", data.exception.toString())
+                        _uiState.postValue(UiState.Error(data.exception))
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+    fun nameTextChanger(text: CharSequence?) {
+        _nameText.value = text?.toString()
+    }
+
+    fun episodesTextChanger(text: CharSequence?) {
+        _episodesText.value = text?.toString()
+    }
+
+    fun clearFilters() {
+        _nameText.value = ""
+        _episodesText.value = ""
     }
 
     fun showDetails() {

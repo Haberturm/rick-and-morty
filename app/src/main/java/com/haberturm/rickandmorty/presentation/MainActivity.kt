@@ -1,6 +1,7 @@
 package com.haberturm.rickandmorty.presentation
 
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.haberturm.rickandmorty.R
@@ -9,6 +10,7 @@ import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainF
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesMainFragment
 import com.haberturm.rickandmorty.presentation.screens.locations.LocationsMainFragment
 import com.haberturm.rickandmorty.util.Const.FRAGMENT_KEY
+import com.haberturm.rickandmorty.util.Util.hideKeyboard
 import dagger.android.support.DaggerAppCompatActivity
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -61,6 +63,13 @@ class MainActivity : DaggerAppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            hideKeyboard(this)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }
 

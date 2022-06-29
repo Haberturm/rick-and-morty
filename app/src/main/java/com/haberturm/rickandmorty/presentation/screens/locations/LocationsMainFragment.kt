@@ -15,6 +15,7 @@ import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
+import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -40,7 +41,7 @@ class LocationsMainFragment : DaggerFragment() {
             },
             context = requireContext()
         )
-        viewModel.getData()
+        //viewModel.getData()
     }
 
     override fun onCreateView(
@@ -49,6 +50,13 @@ class LocationsMainFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentLocationsMainBinding.inflate(inflater)
+
+        listFragmentMethods.openFiltersButtonClickListener(
+            button = binding.filtersButton,
+            navManager = parentFragmentManager,
+            filterFragment = LocationsFilterFragment(),
+            fragmentLabel = "LOCATIONS_FILTER"
+        )
 
         listFragmentMethods.recyclerViewTooling(
             recyclerView = binding.locationList,
@@ -64,7 +72,7 @@ class LocationsMainFragment : DaggerFragment() {
 
         listFragmentMethods.swipeToRefreshListener(
             swipeRefreshLayout = binding.swipeRefreshLayout,
-            onRefreshAction = { viewModel.getData() }  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+            onRefreshAction = { viewModel.refreshData() }  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
         )
 
         listFragmentMethods.stateObserver(
