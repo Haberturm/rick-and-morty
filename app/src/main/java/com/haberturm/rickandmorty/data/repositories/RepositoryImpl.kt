@@ -22,11 +22,11 @@ import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
+import com.haberturm.rickandmorty.util.Const
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -35,10 +35,10 @@ class RepositoryImpl @Inject constructor(
     private val database: RickAndMortyDatabase
 ) : Repository {
 
-    override suspend fun updateCharacters(): Flow<ApiState<Unit>> = flow {
+    override suspend fun updateCharacters(page: Int): Flow<ApiState<Unit>> = flow {
         emit(
             updateState(
-                remoteDataSource = { RetrofitClient.retrofit.getCharacters() },
+                remoteDataSource = { RetrofitClient.retrofit.getCharacters(page) },
                 insertDataInDB = fun(data: ArrayList<CharacterResultsData>) {
                     database.characterDao().insertAll(data)
                 },
@@ -50,11 +50,13 @@ class RepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    override suspend fun getCharacters(): Flow<ApiState<Characters>> = flow {
+    override suspend fun getCharacters(page: Int): Flow<ApiState<Characters>> = flow {
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
                 mapper = CharactersDataMapper(),
-                localDataSource = { database.characterDao().getAllCharacters() },
+                localDataSource = { database.characterDao().getCharactersInRange(lowerBound, upperBound) },
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
             )
         )

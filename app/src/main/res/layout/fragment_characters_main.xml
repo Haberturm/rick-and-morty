@@ -54,8 +54,6 @@
             layout="@layout/error_layout"
             android:visibility="gone" />
 
-
-
     </FrameLayout>
 
 

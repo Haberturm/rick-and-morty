@@ -54,9 +54,28 @@ class CharactersMainViewModel @Inject constructor(
     val genderText: LiveData<String>
         get() = _genderText
 
-    private val _currentPage = MutableLiveData<Int>(1)
+    private val _currentPage = MutableLiveData<Int>(5)
     val currentPage: LiveData<Int>
         get() = _currentPage
+
+    var maxPages: Int = 0
+        private set
+
+    private val _jumpToPageEditState = MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val jumpToPageEditState: LiveData<Boolean>
+        get() = _jumpToPageEditState
+
+    private val _nextPageState = MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val nextPageState: LiveData<Boolean>
+        get() = _nextPageState
+
+    private val _previousPageState = MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val previousPageState: LiveData<Boolean>
+        get() = _previousPageState
+
+
+
+
 
     init {
         getData()
@@ -67,26 +86,35 @@ class CharactersMainViewModel @Inject constructor(
     После обработки в ответа от сети, в любом случае отображаются даннные из бд(если они есть)
      */
     fun getData() {
+        val page = currentPage.value!!
+        _uiState.value = UiState.Loading
         viewModelScope.launch {
-            _uiState.postValue(UiState.Loading)
-            repository.updateCharacters()
+
+            repository.updateCharacters(page)
                 .onEach { networkRequestState ->
                     if (networkRequestState is ApiState.Error) {
                         if (networkRequestState.exception is AppException.NoInternetConnectionException) {
+                            Log.e("EXCEPTION-network", networkRequestState.exception.toString())
                             _uiState.postValue(UiState.Error(networkRequestState.exception))
                         }
                     }
-                    repository.getCharacters()
+                    repository.getCharacters(page)
                         .onEach { data ->
                             when (data) {
                                 is ApiState.Success<Characters> -> {
-                                    _uiState.postValue(
-                                        UiState.Data(
-                                            CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
-                                                data.data
+                                    if(data.data.results.isEmpty()){
+                                        Log.e("EXCEPTION", "EMPTY_PAGE")
+                                        _uiState.postValue(UiState.Error(AppException.UnknownException("EMPTY_PAGE")))
+                                    }else{
+                                        _uiState.postValue(
+                                            UiState.Data(
+                                                CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
+                                                    data.data
+                                                )
                                             )
                                         )
-                                    )
+                                        maxPages = data.data.info.pages
+                                    }
                                 }
                                 is ApiState.Error -> {
                                     Log.e("EXCEPTION", data.exception.toString())
@@ -170,6 +198,40 @@ class CharactersMainViewModel @Inject constructor(
     fun refreshData() {
         getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
         clearFilters()
+    }
+
+    fun nextPage(){
+        if (currentPage.value!!.plus(1) > maxPages){
+            _nextPageState.value = true
+        }else{
+            _currentPage.value = currentPage.value?.plus(1)
+            _nextPageState.value = false
+            getData()
+        }
+    }
+
+    fun previousPage(){
+        if (currentPage.value!!.minus(1) < 1){
+            _previousPageState.value = true
+        }else{
+            _currentPage.value = currentPage.value?.minus(1)
+            getData()
+        }
+    }
+
+    fun jumpToPage(page: CharSequence){
+        try {
+            val numberPage = page.toString().toInt()
+            if (numberPage in 1..maxPages){
+                _currentPage.value = numberPage
+                _jumpToPageEditState.value = false
+                getData()
+            }else{
+                _jumpToPageEditState.value = true
+            }
+        }catch (e:Exception){
+            _jumpToPageEditState.value = true
+        }
     }
 
     fun showDetails() {

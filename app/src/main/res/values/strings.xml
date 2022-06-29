@@ -9,4 +9,7 @@
     <string name="apply_filters_button_text">Apply filters</string>
     <string name="clear_filters_button_text">Clear filters</string>
     <string name="filters_button_text">Open Filters</string>
+    <string name="jump_to_page_error">Non-existent page</string>
+    <string name="previous_page_error">There is no previous page</string>
+    <string name="next_page_error">There is no next page</string>
 </resources>

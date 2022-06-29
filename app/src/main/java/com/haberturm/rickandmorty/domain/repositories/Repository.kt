@@ -10,8 +10,8 @@ import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
-    suspend fun getCharacters(): Flow<ApiState<Characters>>
-    suspend fun updateCharacters(): Flow<ApiState<Unit>>
+    suspend fun getCharacters(page: Int): Flow<ApiState<Characters>>
+    suspend fun updateCharacters(page: Int): Flow<ApiState<Unit>>
     suspend fun getFilteredCharacters(
         name: String,
         status: String,
