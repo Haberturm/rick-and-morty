@@ -15,6 +15,7 @@ import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
+import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -55,6 +56,13 @@ class EpisodesMainFragment : DaggerFragment() {
             manager = GridLayoutManager(requireContext(),2),
             decorator = GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0),
             recyclerViewAdapter = episodesAdapter
+        )
+
+        listFragmentMethods.openFiltersButtonClickListener(
+            button = binding.filtersButton,
+            navManager = parentFragmentManager,
+            filterFragment = EpisodesFilterFragment(),
+            fragmentLabel = "EPISODES_FILTER"
         )
 
         listFragmentMethods.swipeToRefreshListener(

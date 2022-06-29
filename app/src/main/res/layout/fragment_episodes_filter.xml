@@ -20,56 +20,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
-        android:hint="Enter character name..."
+        android:hint="Enter episode name..."
         android:imeOptions="actionDone"
-        android:inputType="text" />
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/status_menu"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
-        android:hint="Choose status">
-
-        <AutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none" />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:inputType="text"
+        android:lines="1" />
 
     <EditText
-        android:id="@+id/species_edit"
+        android:id="@+id/episode_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
-        android:hint="Enter character species..."
+        android:hint="Enter episode code..."
         android:imeOptions="actionDone"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/type_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
-        android:hint="Enter character type..."
-        android:imeOptions="actionDone"
-        android:inputType="text" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/gender_menu"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
-        android:hint="Choose gender">
-
-        <AutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none" />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:inputType="text"
+        android:lines="1" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -30,5 +30,9 @@ interface Repository {
 
     suspend fun updateEpisodes(): Flow<ApiState<Unit>>
     suspend fun getEpisodes(): Flow<ApiState<Episodes>>
+    suspend fun getFilteredEpisodes(
+        name: String,
+        episodes: String
+    ): Flow<ApiState<Episodes>>
 
 }

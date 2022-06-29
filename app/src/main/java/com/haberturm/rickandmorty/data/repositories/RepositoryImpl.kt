@@ -149,6 +149,19 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+    override suspend fun getFilteredEpisodes(name: String, episodes: String) = flow {
+        emit(
+            dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
+                mapper = EpisodesDataMapper(),
+                localDataSource = { database.episodesDao().getFilteredEpisodes(
+                    name = name,
+                    episodes = episodes
+                ) },
+                localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
     private suspend fun <D, T1, T2> updateState(
         remoteDataSource: suspend () -> Response<D>,
         insertDataInDB: (T1) -> Unit,
