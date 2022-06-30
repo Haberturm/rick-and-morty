@@ -5,15 +5,16 @@ import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResponseData
 import com.haberturm.rickandmorty.data.entities.locations.LocationsResponseData
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface RickAndMortyApi {
 
     @GET(AllApi.CHARACTERS)
-    suspend fun getCharacters(): Response<CharactersResponseData>
+    suspend fun getCharacters(@Query("page") page:Int): Response<CharactersResponseData>
 
     @GET(AllApi.LOCATIONS)
-    suspend fun getLocations(): Response<LocationsResponseData>
+    suspend fun getLocations(@Query("page") page:Int): Response<LocationsResponseData>
 
     @GET(AllApi.EPISODES)
-    suspend fun getEpisodes(): Response<EpisodesResponseData>
+    suspend fun getEpisodes(@Query("page") page:Int): Response<EpisodesResponseData>
 }

@@ -94,12 +94,13 @@ class CharactersFilterFragment : DaggerFragment() {
         )
 
         binding.closeFiltersButton.setOnClickListener {
+            viewModel.closeFilters()
             parentFragmentManager.popBackStack()
         }
 
         binding.applyFiltersButton.setOnClickListener {
             parentFragmentManager.popBackStack()
-            viewModel.getFilteredData()
+            viewModel.applyFilters()
         }
 
         binding.clearFiltersButton.setOnClickListener {

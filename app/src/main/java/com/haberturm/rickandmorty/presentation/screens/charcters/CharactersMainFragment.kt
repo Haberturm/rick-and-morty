@@ -1,9 +1,14 @@
 package com.haberturm.rickandmorty.presentation.screens.charcters
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.GridLayoutManager
@@ -48,7 +53,6 @@ class CharactersMainFragment : DaggerFragment() {
             },
             context = requireContext()
         )
-        //viewModel.getData()
     }
 
     override fun onCreateView(
@@ -57,6 +61,27 @@ class CharactersMainFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentCharactersMainBinding.inflate(inflater)
+
+        viewModel.currentPage.observe(viewLifecycleOwner){ currentPage ->
+            viewModel.maxPages.observe(viewLifecycleOwner){ maxPages ->
+                binding.pageHeaderText.text = getString(R.string.page_header_text,currentPage, maxPages)
+            }
+        }
+
+        listFragmentMethods.setUpPagePicker(
+            pagePicker = binding.pagePicker,
+            onNextPage = { viewModel.nextPage() },
+            onPreviousPage = { viewModel.previousPage() },
+            jumpToPage = fun(pageText: CharSequence){
+                viewModel.jumpToPage(pageText)
+            },
+            jumpToPageState = viewModel.jumpToPageEditState,
+            previousPageState = viewModel.previousPageState,
+            nextPageState = viewModel.nextPageState,
+            lifecycleOwner = viewLifecycleOwner,
+            context = requireContext()
+        )
+
 
         listFragmentMethods.openFiltersButtonClickListener(
             button = binding.filtersButton,

@@ -12,6 +12,8 @@ import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.mappers.characters.CharactersUiMapper
+import com.haberturm.rickandmorty.util.Const
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -54,8 +56,32 @@ class CharactersMainViewModel @Inject constructor(
     val genderText: LiveData<String>
         get() = _genderText
 
+    private val _currentPage = MutableLiveData<Int>(1)
+    val currentPage: LiveData<Int>
+        get() = _currentPage
+
+    private val _maxPages = MutableLiveData<Int>(42)
+    val maxPages: LiveData<Int>
+        get() = _maxPages
+
+    private val _jumpToPageEditState =
+        MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val jumpToPageEditState: LiveData<Boolean>
+        get() = _jumpToPageEditState
+
+    private val _nextPageState =
+        MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val nextPageState: LiveData<Boolean>
+        get() = _nextPageState
+
+    private val _previousPageState =
+        MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val previousPageState: LiveData<Boolean>
+        get() = _previousPageState
+
+    private var filtersApplied = false
+
     init {
-        Log.i("ROTATION", "vm init")
         getData()
     }
 
@@ -64,26 +90,41 @@ class CharactersMainViewModel @Inject constructor(
     После обработки в ответа от сети, в любом случае отображаются даннные из бд(если они есть)
      */
     fun getData() {
+        val page = currentPage.value!!
+        _uiState.value = UiState.Loading
         viewModelScope.launch {
-            _uiState.postValue(UiState.Loading)
-            repository.updateCharacters()
+            repository.updateCharacters(page)
                 .onEach { networkRequestState ->
                     if (networkRequestState is ApiState.Error) {
+                        Log.e("EXCEPTION-network", networkRequestState.exception.toString())
                         if (networkRequestState.exception is AppException.NoInternetConnectionException) {
                             _uiState.postValue(UiState.Error(networkRequestState.exception))
                         }
                     }
-                    repository.getCharacters()
+                    repository.getCharacters(page)
                         .onEach { data ->
                             when (data) {
                                 is ApiState.Success<Characters> -> {
-                                    _uiState.postValue(
-                                        UiState.Data(
-                                            CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
-                                                data.data
+                                    delay(500) // for smooth loading screen
+                                    if (data.data.results.isEmpty()) {
+                                        Log.e("EXCEPTION", "EMPTY_PAGE")
+                                        _uiState.postValue(
+                                            UiState.Error(
+                                                AppException.UnknownException(   //todo: сделать отдельную ошибку на случай пустой бд
+                                                    "EMPTY_PAGE"
+                                                )
                                             )
                                         )
-                                    )
+                                    } else {
+                                        _uiState.postValue(
+                                            UiState.Data(
+                                                CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
+                                                    data.data
+                                                )
+                                            )
+                                        )
+                                        _maxPages.value = data.data.info.pages
+                                    }
                                 }
                                 is ApiState.Error -> {
                                     Log.e("EXCEPTION", data.exception.toString())
@@ -118,8 +159,10 @@ class CharactersMainViewModel @Inject constructor(
                     is ApiState.Success<Characters> -> {
                         _uiState.postValue(
                             UiState.Data(
-                                CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
-                                    data.data
+                                pageFilteredData(
+                                    CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
+                                        data.data
+                                    )
                                 )
                             )
                         )
@@ -131,6 +174,16 @@ class CharactersMainViewModel @Inject constructor(
                 }
             }.launchIn(this)
         }
+    }
+
+    private fun pageFilteredData(
+        list: List<CharacterUi>
+    ): List<CharacterUi> {
+        val page = currentPage.value!!
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
+        _maxPages.value = list.size / 20 + 1
+        return list.filterIndexed { index, _ -> index in lowerBound - 1 until upperBound }
     }
 
 
@@ -156,7 +209,15 @@ class CharactersMainViewModel @Inject constructor(
         _genderText.value = genderItems[genderPosition.value!!]
     }
 
+    fun applyFilters() {
+        filtersApplied = true
+        _currentPage.value = 1
+        getFilteredData()
+    }
+
     fun clearFilters() {
+        filtersApplied = false
+        _currentPage.value = 1
         _genderPosition.value = 0
         _statusPosition.value = 0
         _nameText.value = ""
@@ -164,9 +225,65 @@ class CharactersMainViewModel @Inject constructor(
         _typeText.value = ""
     }
 
-    fun refreshData(){
-        getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
-        clearFilters()
+    fun closeFilters(){
+        if (!filtersApplied){
+            refreshData()
+        }
+    }
+
+    fun refreshData() {
+        if(filtersApplied){
+            getFilteredData()
+        }else{
+            getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        }
+    }
+
+    fun nextPage() {
+        if (currentPage.value!!.plus(1) > _maxPages.value!!) {
+            _nextPageState.value = true
+        } else {
+            _currentPage.value = currentPage.value?.plus(1)
+            _nextPageState.value = false
+            if (filtersApplied){
+                getFilteredData()
+            }else{
+                getData()
+            }
+
+        }
+    }
+
+    fun previousPage() {
+        if (currentPage.value!!.minus(1) < 1) {
+            _previousPageState.value = true
+        } else {
+            _currentPage.value = currentPage.value?.minus(1)
+            if (filtersApplied){
+                getFilteredData()
+            }else{
+                getData()
+            }
+        }
+    }
+
+    fun jumpToPage(page: CharSequence) {
+        try {
+            val numberPage = page.toString().toInt()
+            if (numberPage in 1.._maxPages.value!!) {
+                _currentPage.value = numberPage
+                _jumpToPageEditState.value = false
+                if (filtersApplied){
+                    getFilteredData()
+                }else{
+                    getData()
+                }
+            } else {
+                _jumpToPageEditState.value = true
+            }
+        } catch (e: Exception) {
+            _jumpToPageEditState.value = true
+        }
     }
 
     fun showDetails() {

@@ -22,11 +22,11 @@ import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
+import com.haberturm.rickandmorty.util.Const
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -35,10 +35,10 @@ class RepositoryImpl @Inject constructor(
     private val database: RickAndMortyDatabase
 ) : Repository {
 
-    override suspend fun updateCharacters(): Flow<ApiState<Unit>> = flow {
+    override suspend fun updateCharacters(page: Int): Flow<ApiState<Unit>> = flow {
         emit(
             updateState(
-                remoteDataSource = { RetrofitClient.retrofit.getCharacters() },
+                remoteDataSource = { RetrofitClient.retrofit.getCharacters(page) },
                 insertDataInDB = fun(data: ArrayList<CharacterResultsData>) {
                     database.characterDao().insertAll(data)
                 },
@@ -50,11 +50,13 @@ class RepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    override suspend fun getCharacters(): Flow<ApiState<Characters>> = flow {
+    override suspend fun getCharacters(page: Int): Flow<ApiState<Characters>> = flow {
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
                 mapper = CharactersDataMapper(),
-                localDataSource = { database.characterDao().getAllCharacters() },
+                localDataSource = { database.characterDao().getCharactersInRange(lowerBound, upperBound) },
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
             )
         )
@@ -77,7 +79,6 @@ class RepositoryImpl @Inject constructor(
                         species = species,
                         type = type,
                         gender = gender.ifEmpty { "%" }
-
                     )
                 },
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
@@ -85,10 +86,10 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun updateLocations(): Flow<ApiState<Unit>> = flow {
+    override suspend fun updateLocations(page: Int): Flow<ApiState<Unit>> = flow {
         emit(
             updateState(
-                remoteDataSource = { RetrofitClient.retrofit.getLocations() },
+                remoteDataSource = { RetrofitClient.retrofit.getLocations(page) },
                 insertDataInDB = fun(data: ArrayList<LocationResultsData>) {
                     database.locationsDao().insertAll(data)
                 },
@@ -99,11 +100,13 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getLocations(): Flow<ApiState<Locations>> = flow {
+    override suspend fun getLocations(page: Int): Flow<ApiState<Locations>> = flow {
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Locations, List<LocationResultsData>, LocationsInfoData>(
                 mapper = LocationsDataMapper(),
-                localDataSource = { database.locationsDao().getAllLocations() },
+                localDataSource = { database.locationsDao().getLocationsInRange(lowerBound, upperBound) },
                 localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
             )
         )
@@ -125,10 +128,10 @@ class RepositoryImpl @Inject constructor(
         ))
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun updateEpisodes(): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
+    override suspend fun updateEpisodes(page: Int): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
             updateState(
-                remoteDataSource = { RetrofitClient.retrofit.getEpisodes() },
+                remoteDataSource = { RetrofitClient.retrofit.getEpisodes(page) },
                 insertDataInDB = fun(data: ArrayList<EpisodesResultsData>) {
                     database.episodesDao().insertAll(data)
                 },
@@ -139,11 +142,13 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getEpisodes(): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
+    override suspend fun getEpisodes(page: Int): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
                 mapper = EpisodesDataMapper(),
-                localDataSource = { database.episodesDao().getAllEpisodes() },
+                localDataSource = { database.episodesDao().getEpisodesInRange(lowerBound, upperBound) },
                 localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
             )
         )

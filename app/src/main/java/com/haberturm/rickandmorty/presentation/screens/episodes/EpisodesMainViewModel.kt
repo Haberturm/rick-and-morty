@@ -15,6 +15,8 @@ import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
 import com.haberturm.rickandmorty.presentation.mappers.characters.CharactersUiMapper
 import com.haberturm.rickandmorty.presentation.mappers.episodes.EpisodesUiMapper
+import com.haberturm.rickandmorty.util.Const
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -37,27 +39,67 @@ class EpisodesMainViewModel @Inject constructor(
     val episodesText: LiveData<String>
         get() = _episodesText
 
+    private val _currentPage = MutableLiveData<Int>(1)
+    val currentPage: LiveData<Int>
+        get() = _currentPage
+
+    private val _maxPages = MutableLiveData<Int>(3)
+    val maxPages: LiveData<Int>
+        get() = _maxPages
+
+    private val _jumpToPageEditState =
+        MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val jumpToPageEditState: LiveData<Boolean>
+        get() = _jumpToPageEditState
+
+    private val _nextPageState =
+        MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val nextPageState: LiveData<Boolean>
+        get() = _nextPageState
+
+    private val _previousPageState =
+        MutableLiveData<Boolean>(false) // false - нет ошибок, true - есть ошибка
+    val previousPageState: LiveData<Boolean>
+        get() = _previousPageState
+
+    private var filtersApplied = false
+
     fun getData() {
+        val page = currentPage.value!!
+        _uiState.value = UiState.Loading
         viewModelScope.launch {
-            _uiState.postValue(UiState.Loading)
-            repository.updateEpisodes()
+            repository.updateEpisodes(page)
                 .onEach { networkRequestState ->
                     if (networkRequestState is ApiState.Error) {
+                        Log.e("EXCEPTION-network", networkRequestState.exception.toString())
                         if (networkRequestState.exception is AppException.NoInternetConnectionException) {
                             _uiState.postValue(UiState.Error(networkRequestState.exception))
                         }
                     }
-                    repository.getEpisodes()
+                    repository.getEpisodes(page)
                         .onEach { data ->
                             when (data) {
                                 is ApiState.Success<Episodes> -> {
-                                    _uiState.postValue(
-                                        UiState.Data(
-                                            EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
-                                                data.data
+                                    delay(500) // for smooth loading screen
+                                    if (data.data.results.isEmpty()){
+                                        Log.e("EXCEPTION", "EMPTY_PAGE")
+                                        _uiState.postValue(
+                                            UiState.Error(
+                                                AppException.UnknownException(   //todo: сделать отдельную ошибку на случай пустой бд
+                                                    "EMPTY_PAGE"
+                                                )
                                             )
                                         )
-                                    )
+                                    }else{
+                                        _uiState.postValue(
+                                            UiState.Data(
+                                                EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
+                                                    data.data
+                                                )
+                                            )
+                                        )
+                                        _maxPages.value = data.data.info.pages
+                                    }
                                 }
                                 is ApiState.Error -> {
                                     Log.e("EXCEPTION", data.exception.toString())
@@ -82,8 +124,10 @@ class EpisodesMainViewModel @Inject constructor(
                     is ApiState.Success<Episodes> -> {
                         _uiState.postValue(
                             UiState.Data(
-                                EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
-                                    data.data
+                                pageFilteredData(
+                                    EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
+                                        data.data
+                                    )
                                 )
                             )
                         )
@@ -97,6 +141,16 @@ class EpisodesMainViewModel @Inject constructor(
         }
     }
 
+    private fun pageFilteredData(
+        list: List<EpisodeUi>
+    ): List<EpisodeUi> {
+        val page = currentPage.value!!
+        val upperBound = page * Const.ITEMS_PER_PAGE
+        val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
+        _maxPages.value = list.size / 20 + 1
+        return list.filterIndexed { index, _ -> index in lowerBound - 1 until upperBound }
+    }
+
     fun nameTextChanger(text: CharSequence?) {
         _nameText.value = text?.toString()
     }
@@ -105,9 +159,78 @@ class EpisodesMainViewModel @Inject constructor(
         _episodesText.value = text?.toString()
     }
 
+    fun applyFilters() {
+        filtersApplied = true
+        _currentPage.value = 1
+        getFilteredData()
+    }
+
     fun clearFilters() {
+        filtersApplied = false
+        _currentPage.value = 1
         _nameText.value = ""
         _episodesText.value = ""
+    }
+
+    fun closeFilters(){
+        if (!filtersApplied){
+            refreshData()
+        }
+    }
+
+    fun refreshData() {
+        if(filtersApplied){
+            getFilteredData()
+        }else{
+            getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
+        }
+    }
+
+    fun nextPage() {
+        if (currentPage.value!!.plus(1) > _maxPages.value!!) {
+            _nextPageState.value = true
+        } else {
+            _currentPage.value = currentPage.value?.plus(1)
+            _nextPageState.value = false
+            if (filtersApplied){
+                getFilteredData()
+            }else{
+                getData()
+            }
+
+        }
+    }
+
+    fun previousPage() {
+        if (currentPage.value!!.minus(1) < 1) {
+            _previousPageState.value = true
+        } else {
+            _currentPage.value = currentPage.value?.minus(1)
+            if (filtersApplied){
+                getFilteredData()
+            }else{
+                getData()
+            }
+        }
+    }
+
+    fun jumpToPage(page: CharSequence) {
+        try {
+            val numberPage = page.toString().toInt()
+            if (numberPage in 1.._maxPages.value!!) {
+                _currentPage.value = numberPage
+                _jumpToPageEditState.value = false
+                if (filtersApplied){
+                    getFilteredData()
+                }else{
+                    getData()
+                }
+            } else {
+                _jumpToPageEditState.value = true
+            }
+        } catch (e: Exception) {
+            _jumpToPageEditState.value = true
+        }
     }
 
     fun showDetails() {
