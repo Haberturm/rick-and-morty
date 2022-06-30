@@ -21,7 +21,11 @@ class MainActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         currentFragmentName = savedInstanceState?.getString(FRAGMENT_KEY)
-        setFragment(getFragmentFromName(currentFragmentName))
+
+        if(savedInstanceState == null){
+            setFragment(getFragmentFromName(currentFragmentName))
+        }
+
         handleBottomNavigation(binding.bottomNavigation)
         setContentView(binding.root)
     }
@@ -72,7 +76,7 @@ class MainActivity : DaggerAppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 }
-
+// UNUSED LOGIC TODO: CLEAR IT
 fun getNameFromFragment(fragment: Fragment): String?{
     return when(fragment){
         is CharactersMainFragment -> NavigationDestinations.CharactersMain.name
