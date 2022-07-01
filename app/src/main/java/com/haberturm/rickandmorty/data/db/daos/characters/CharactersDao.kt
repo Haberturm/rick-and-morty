@@ -17,6 +17,8 @@ interface CharactersDao {
     @Query("SELECT * FROM character WHERE id >= :lowerBound AND id <= :upperBound")
     fun getCharactersInRange(lowerBound: Int, upperBound: Int): List<CharacterResultsData>
 
+    @Query("SELECT * FROM character WHERE id = :id")
+    fun getCharacterById(id: Int): CharacterResultsData
 
     @Query("SELECT * FROM character WHERE " +
             "name LIKE '%' || :name || '%' AND " +

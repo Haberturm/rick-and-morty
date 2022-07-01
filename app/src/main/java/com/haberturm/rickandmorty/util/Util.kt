@@ -17,4 +17,16 @@ object Util {
         val v = (context as Activity).currentFocus ?: return
         inputManager.hideSoftInputFromWindow(v.windowToken, 0)
     }
+
+    fun getIdFromUrl(url: String): Int {
+        if(url.isEmpty()) return -1
+        var reversedIdString: String = ""
+        run breaking@{
+            url.reversed().forEach {
+                if (it == '/') return@breaking
+                reversedIdString += it
+            }
+        }
+        return reversedIdString.reversed().toInt()
+    }
 }

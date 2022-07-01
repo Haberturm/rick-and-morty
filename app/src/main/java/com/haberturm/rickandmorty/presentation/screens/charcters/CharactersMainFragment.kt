@@ -1,33 +1,19 @@
 package com.haberturm.rickandmorty.presentation.screens.charcters
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.*
+import androidx.fragment.app.commit
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.haberturm.rickandmorty.R
-import com.haberturm.rickandmorty.databinding.ErrorLayoutBinding
 import com.haberturm.rickandmorty.databinding.FragmentCharactersMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
-import com.haberturm.rickandmorty.domain.common.AppException
-import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
-import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
-import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
-import com.haberturm.rickandmorty.presentation.entities.CharacterUi
-import com.haberturm.rickandmorty.presentation.entities.LocationUi
-import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesListAdapter
-import com.haberturm.rickandmorty.presentation.screens.locations.LocationListAdapter
+import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -48,6 +34,15 @@ class CharactersMainFragment : DaggerFragment() {
         charactersAdapter = CharacterListAdapter(
             listener = object : CharacterListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
+                    parentFragmentManager.commit {
+                        val arguments = Bundle()
+                        arguments.putInt( "string_key" , id);
+                        val fragment = CharacterDetailFragment()
+                        fragment.arguments = arguments
+                        replace(R.id.fullscreen_container, fragment)
+                        addToBackStack("CHARACTER_DETAIL_FRAGMENT")
+                        setReorderingAllowed(true)
+                    }
                     viewModel.showDetails()
                 }
             },

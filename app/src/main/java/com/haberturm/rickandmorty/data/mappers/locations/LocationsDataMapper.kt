@@ -37,4 +37,8 @@ class LocationsDataMapper : DataMapper() {
             )
         ) as D
     }
+
+    override fun <T, D> fromDataToDomainSingle(data: T): D {
+        TODO("Not yet implemented")
+    }
 }

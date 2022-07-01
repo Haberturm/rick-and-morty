@@ -24,4 +24,8 @@ class EpisodesUiMapper : UiMapper() {
             )
         } as D
     }
+
+    override fun <T, D> fromDomainToUiSingle(data: T): D {
+        TODO("Not yet implemented")
+    }
 }

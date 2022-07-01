@@ -37,4 +37,8 @@ class EpisodesDataMapper : DataMapper() {
             } as ArrayList<EpisodesResults>
         ) as D
     }
+
+    override fun <T, D> fromDataToDomainSingle(data: T): D {
+        TODO("Not yet implemented")
+    }
 }
