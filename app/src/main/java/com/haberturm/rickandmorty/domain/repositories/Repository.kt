@@ -1,8 +1,5 @@
 package com.haberturm.rickandmorty.domain.repositories
 
-import androidx.annotation.Dimension
-import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
-import com.haberturm.rickandmorty.data.entities.characters.CharactersResponseData
 import com.haberturm.rickandmorty.domain.common.ApiState
 import com.haberturm.rickandmorty.domain.entities.characters.CharacterResults
 import com.haberturm.rickandmorty.domain.entities.characters.Characters
@@ -37,5 +34,7 @@ interface Repository {
         name: String,
         episodes: String
     ): Flow<ApiState<Episodes>>
+    fun getEpisodesByIdList(ids: List<Int>): Flow<ApiState<Episodes>>
+    fun updateEpisodesByIdList(ids: List<Int>): Flow<ApiState<Unit>>
 
 }

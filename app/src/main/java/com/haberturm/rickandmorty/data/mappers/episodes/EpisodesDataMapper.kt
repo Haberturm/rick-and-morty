@@ -17,13 +17,17 @@ class EpisodesDataMapper : DataMapper() {
             )
         }
         val episodesData = (data as EpisodesResponseData)
+        val info = if (episodesData.info != null){
+            EpisodesInfo(
+                count = episodesData.info!!.count,
+                pages = episodesData.info!!.pages,
+                next = episodesData.info!!.next,
+                prev = episodesData.info!!.prev)
+        }else{
+            null
+        }
         return Episodes(
-            info = EpisodesInfo(
-                count = episodesData.info.count,
-                pages = episodesData.info.pages,
-                next = episodesData.info.next,
-                prev = episodesData.info.prev
-            ),
+            info = info,
             results = episodesData.results.map{ episodesResult ->
                 EpisodesResults(
                     id = episodesResult.id,

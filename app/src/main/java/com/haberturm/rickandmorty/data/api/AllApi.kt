@@ -13,4 +13,7 @@ object AllApi {
 
     private const val EPISODES_PATH = "episode/"
     const val EPISODES = RICK_AND_MORTY_BASE_URL + EPISODES_PATH
+
+    private const val EPISODES_BY_IDS_PATH = "episode/{ids}"
+    const val EPISODES_BY_IDS = RICK_AND_MORTY_BASE_URL + EPISODES_BY_IDS_PATH
 }

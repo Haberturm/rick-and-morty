@@ -98,7 +98,7 @@ class EpisodesMainViewModel @Inject constructor(
                                                 )
                                             )
                                         )
-                                        _maxPages.value = data.data.info.pages
+                                        _maxPages.value = data.data.info?.pages
                                     }
                                 }
                                 is ApiState.Error -> {

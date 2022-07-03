@@ -4,6 +4,7 @@ import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
 import com.haberturm.rickandmorty.data.entities.characters.CharactersResponseData
 import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.domain.entities.characters.*
+import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesInfo
 import com.haberturm.rickandmorty.util.Util
 
 class CharactersDataMapper() : DataMapper() {
@@ -16,6 +17,16 @@ class CharactersDataMapper() : DataMapper() {
             )
         }
         val charactersData = (data as CharactersResponseData)
+        val info = if (charactersData.info != null){
+            CharactersInfo(
+                count = charactersData.info!!.charactersCount,
+                pages = charactersData.info!!.charactersPages,
+                next = charactersData.info!!.charactersNext,
+                prev = charactersData.info!!.charactersPrev
+            )
+        }else{
+            null
+        }
         return Characters(
             results = charactersData.results.map { resultsData ->
                 CharacterResults(
@@ -39,12 +50,7 @@ class CharactersDataMapper() : DataMapper() {
                     created = resultsData.created
                 )
             } as ArrayList<CharacterResults>,
-            info = CharactersInfo(
-                count = charactersData.info.charactersCount,
-                pages = charactersData.info.charactersPages,
-                next = charactersData.info.charactersNext,
-                prev = charactersData.info.charactersPrev
-            )
+            info = info
         ) as D
     }
 

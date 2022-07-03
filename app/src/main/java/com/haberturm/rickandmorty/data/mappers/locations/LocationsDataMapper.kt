@@ -2,6 +2,7 @@ package com.haberturm.rickandmorty.data.mappers.locations
 
 import com.haberturm.rickandmorty.data.entities.locations.LocationsResponseData
 import com.haberturm.rickandmorty.data.mappers.DataMapper
+import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesInfo
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.entities.locations.LocationResults
 import com.haberturm.rickandmorty.domain.entities.locations.LocationsInfo
@@ -17,6 +18,15 @@ class LocationsDataMapper : DataMapper() {
             )
         }
         val locationsData = (data as LocationsResponseData)
+        val info = if (locationsData.info != null){
+            LocationsInfo(
+                count = locationsData.info!!.count,
+                pages = locationsData.info!!.pages,
+                next = locationsData.info!!.next,
+                prev = locationsData.info!!.prev)
+        }else{
+            null
+        }
         return Locations(
             results = locationsData.results.map{ resultsData ->
                 LocationResults(
@@ -29,12 +39,7 @@ class LocationsDataMapper : DataMapper() {
                     created = resultsData.created
                 )
             } as ArrayList<LocationResults>,
-            info = LocationsInfo(
-                count = locationsData.info.count,
-                pages = locationsData.info.pages,
-                next = locationsData.info.next,
-                prev = locationsData.info.prev
-            )
+            info = info
         ) as D
     }
 

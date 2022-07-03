@@ -20,6 +20,7 @@ interface CharactersDao {
     @Query("SELECT * FROM character WHERE id = :id")
     fun getCharacterById(id: Int): CharacterResultsData
 
+
     @Query("SELECT * FROM character WHERE " +
             "name LIKE '%' || :name || '%' AND " +
             "status LIKE :status AND " +

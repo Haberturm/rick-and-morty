@@ -29,4 +29,13 @@ object Util {
         }
         return reversedIdString.reversed().toInt()
     }
+
+    fun getNewWordPosition(string: String): Int{
+        string.forEachIndexed { index, c ->
+            if(c == ' ') {
+                return index + 1
+            }
+        }
+        return 0
+    }
 }

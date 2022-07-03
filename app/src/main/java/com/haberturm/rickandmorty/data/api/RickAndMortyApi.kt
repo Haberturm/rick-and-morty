@@ -3,6 +3,7 @@ package com.haberturm.rickandmorty.data.api
 import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
 import com.haberturm.rickandmorty.data.entities.characters.CharactersResponseData
 import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResponseData
+import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResultsData
 import com.haberturm.rickandmorty.data.entities.locations.LocationsResponseData
 import retrofit2.Response
 import retrofit2.http.GET
@@ -22,4 +23,6 @@ interface RickAndMortyApi {
 
     @GET(AllApi.EPISODES)
     suspend fun getEpisodes(@Query("page") page:Int): Response<EpisodesResponseData>
+    @GET(AllApi.EPISODES_BY_IDS)
+    suspend fun getEpisodesByIds(@Path("ids") ids: String): Response<ArrayList<EpisodesResultsData>>
 }

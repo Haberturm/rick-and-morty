@@ -191,6 +191,30 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+    override fun getEpisodesByIdList(ids: List<Int>) = flow{
+        emit(
+            dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData?>(
+                mapper = EpisodesDataMapper(),
+                localDataSource = { database.episodesDao().getEpisodesByIdList(ids) },
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun updateEpisodesByIdList(ids: List<Int>): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
+        val idsPath = ids.toString()
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getEpisodesByIds(idsPath) },
+                insertDataInDB = fun(data: ArrayList<EpisodesResultsData>) {
+                    database.episodesDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(_: Unit) {
+                    Unit
+                }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
     private suspend fun <D, T1, T2> updateState(
         remoteDataSource: suspend () -> Response<D>,
         insertDataInDB: (T1) -> Unit,
@@ -223,6 +247,19 @@ class RepositoryImpl @Inject constructor(
                         val data2insert = arrayListOf<CharacterResultsData >(data)
                         insertDataInDB(data2insert as T1)
                     }
+                    is List<*> -> {
+                        try {
+                            when(data[0]){
+                                is EpisodesResultsData -> {
+                                    insertDataInDB(data as T1)
+                                }
+                            }
+                        }catch (e: Exception){
+                            return ApiState.Error(
+                                AppException.UnknownException(e.message.toString())
+                            )
+                        }
+                    }
                 }
                 return ApiState.Success(Unit)
             } else {
@@ -247,13 +284,13 @@ class RepositoryImpl @Inject constructor(
     private inline fun <reified R, R1, R2> dataState(
         mapper: DataMapper,
         localDataSource: () -> R1,
-        localDataInfoSource: () -> R2,
+        noinline localDataInfoSource: (() -> R2)? = null,
     ): ApiState<R> {
         try {
             when (R::class) {
                 Characters::class -> {
                     val data2return = CharactersResponseData(
-                        info = localDataInfoSource() as CharactersInfoData,
+                        info = if(localDataInfoSource != null) localDataInfoSource() as CharactersInfoData else null,
                         results = localDataSource() as ArrayList<CharacterResultsData>
                     )
                     return ApiState.Success(
@@ -262,7 +299,7 @@ class RepositoryImpl @Inject constructor(
                 }
                 Locations::class -> {
                     val data2return = LocationsResponseData(
-                        info = localDataInfoSource() as LocationsInfoData,
+                        info = if(localDataInfoSource!=null)localDataInfoSource() as LocationsInfoData else null,
                         results = localDataSource() as ArrayList<LocationResultsData>
                     )
                     return ApiState.Success(
@@ -271,7 +308,7 @@ class RepositoryImpl @Inject constructor(
                 }
                 Episodes::class -> {
                     val data2return = EpisodesResponseData(
-                        info = localDataInfoSource() as EpisodesInfoData,
+                        info = if(localDataInfoSource != null)  localDataInfoSource() as EpisodesInfoData else null,
                         results = localDataSource() as ArrayList<EpisodesResultsData>
                     )
                     return ApiState.Success(

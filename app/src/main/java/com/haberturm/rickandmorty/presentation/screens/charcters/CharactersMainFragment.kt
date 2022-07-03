@@ -14,6 +14,7 @@ import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
+import com.haberturm.rickandmorty.util.Const
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class CharactersMainFragment : DaggerFragment() {
                 override fun showDetail(id: Int) {
                     parentFragmentManager.commit {
                         val arguments = Bundle()
-                        arguments.putInt( "string_key" , id);
+                        arguments.putInt( Const.DETAIL_ID_ARG_KEY , id);
                         val fragment = CharacterDetailFragment()
                         fragment.arguments = arguments
                         replace(R.id.fullscreen_container, fragment)
