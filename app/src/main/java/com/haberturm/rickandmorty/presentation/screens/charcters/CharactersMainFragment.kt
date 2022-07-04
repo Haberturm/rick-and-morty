@@ -13,6 +13,7 @@ import com.haberturm.rickandmorty.databinding.FragmentCharactersMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
+import com.haberturm.rickandmorty.presentation.navigation.Navigation
 import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
 import com.haberturm.rickandmorty.util.Const
 import dagger.android.support.DaggerFragment
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 class CharactersMainFragment : DaggerFragment() {
     private lateinit var charactersAdapter: CharacterListAdapter
-
+    private lateinit var navigation: Navigation
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -32,18 +33,16 @@ class CharactersMainFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navigation = Navigation(parentFragmentManager)
         charactersAdapter = CharacterListAdapter(
             listener = object : CharacterListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
-                    parentFragmentManager.commit {
-                        val arguments = Bundle()
-                        arguments.putInt( Const.DETAIL_ID_ARG_KEY , id);
-                        val fragment = CharacterDetailFragment()
-                        fragment.arguments = arguments
-                        replace(R.id.fullscreen_container, fragment)
-                        addToBackStack(Const.CHARACTER_DETAIL_FRAGMENT)
-                        setReorderingAllowed(true)
-                    }
+                    navigation.replaceFragment(
+                        containerId = R.id.fullscreen_container,
+                        fragment = CharacterDetailFragment(),
+                        arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , id)},
+                        addToBackStack = Const.CHARACTER_DETAIL_FRAGMENT
+                    )
                 }
             },
             context = requireContext()

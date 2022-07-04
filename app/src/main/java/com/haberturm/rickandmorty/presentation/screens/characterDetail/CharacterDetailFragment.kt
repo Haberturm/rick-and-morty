@@ -19,8 +19,10 @@ import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.MarginDecorator
+import com.haberturm.rickandmorty.presentation.navigation.Navigation
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainFragment
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesListAdapter
+import com.haberturm.rickandmorty.presentation.screens.locationDetail.LocationDetailFragment
 import com.haberturm.rickandmorty.util.Const
 import com.haberturm.rickandmorty.util.Util
 import com.haberturm.rickandmorty.util.loadImage
@@ -30,7 +32,7 @@ import javax.inject.Inject
 
 class CharacterDetailFragment : DaggerFragment() {
     private lateinit var episodesAdapter: EpisodesListAdapter
-
+    private lateinit var navigation: Navigation
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -42,6 +44,7 @@ class CharacterDetailFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navigation = Navigation(parentFragmentManager)
         episodesAdapter = EpisodesListAdapter(
             listener = object : EpisodesListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
@@ -110,7 +113,14 @@ class CharacterDetailFragment : DaggerFragment() {
                     val originText = getString(R.string.origin_template, state.data.originName)
                     binding.origin.setLinkText(
                         string = originText,
-                        actionOnClick = {/*todo*/ },
+                        actionOnClick = {
+                            navigation.replaceFragment(
+                                containerId = R.id.fullscreen_container,
+                                fragment = LocationDetailFragment(),
+                                arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , state.data.originId)},
+                                addToBackStack = Const.LOCATION_DETAIL_FRAGMENT
+                            )
+                        },
                         linkStartPosition = Util.getNewWordPosition(originText),
                         linkEndPosition = originText.length
                     )
@@ -119,7 +129,14 @@ class CharacterDetailFragment : DaggerFragment() {
                         getString(R.string.location_template, state.data.locationName)
                     binding.location.setLinkText(
                         string = locationText,
-                        actionOnClick = {/*todo*/ },
+                        actionOnClick = {
+                            navigation.replaceFragment(
+                                containerId = R.id.fullscreen_container,
+                                fragment = LocationDetailFragment(),
+                                arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , state.data.locationId)},
+                                addToBackStack = Const.LOCATION_DETAIL_FRAGMENT
+                            )
+                        },
                         linkStartPosition = Util.getNewWordPosition(locationText),
                         linkEndPosition = locationText.length
                     )
@@ -132,31 +149,11 @@ class CharacterDetailFragment : DaggerFragment() {
             recyclerView = binding.episodesList,
             loadingIndicator = binding.loadingIndicatorList,
             errorView = binding.errorList,
-            errorRefreshAction = {viewModel.getData(arguments?.getInt(Const.DETAIL_ID_ARG_KEY)!!)},
+            errorRefreshAction = { viewModel.getData(arguments?.getInt(Const.DETAIL_ID_ARG_KEY)!!) },
             fragmentManager = parentFragmentManager,
             recyclerViewAdapter = episodesAdapter
         )
 
-//        viewModel.episodesListState.observe(viewLifecycleOwner) { state ->
-//            when (state) {
-//                UiState.Loading -> {
-//                    binding.episodesList.visibility = View.GONE
-//                    binding.loadingIndicatorList.visibility = View.VISIBLE
-//                    binding.errorList.root.visibility = View.GONE
-//                }
-//                is UiState.Error -> {
-//                    binding.episodesList.visibility = View.GONE
-//                    binding.loadingIndicatorList.visibility = View.GONE
-//                }
-//                is UiState.Data -> {
-//                    episodesAdapter.submitUpdate(state.data)
-//                    binding.errorList.root.visibility = View.GONE
-//                    binding.loadingIndicatorList.visibility = View.GONE
-//                    binding.episodesList.visibility = View.VISIBLE
-//
-//                }
-//            }
-//        }
         return binding.root
     }
 }
