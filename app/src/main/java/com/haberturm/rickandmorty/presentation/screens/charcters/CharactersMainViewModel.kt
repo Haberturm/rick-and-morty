@@ -285,8 +285,4 @@ class CharactersMainViewModel @Inject constructor(
             _jumpToPageEditState.value = true
         }
     }
-
-    fun showDetails() {
-
-    }
 }

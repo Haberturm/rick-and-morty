@@ -55,6 +55,4 @@ class CharactersUiMapper : UiMapper() {
         ) as D
 
     }
-
-
 }

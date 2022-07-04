@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
+import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResultsData
 
 @Dao
 interface CharactersDao {
@@ -20,6 +21,8 @@ interface CharactersDao {
     @Query("SELECT * FROM character WHERE id = :id")
     fun getCharacterById(id: Int): CharacterResultsData
 
+    @Query("SELECT * FROM character WHERE id IN (:ids)")
+    fun getCharactersByIdsList(ids: List<Int>): List<CharacterResultsData>
 
     @Query("SELECT * FROM character WHERE " +
             "name LIKE '%' || :name || '%' AND " +

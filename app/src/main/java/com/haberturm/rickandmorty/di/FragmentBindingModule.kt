@@ -5,6 +5,7 @@ import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilte
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainFragment
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesFilterFragment
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesMainFragment
+import com.haberturm.rickandmorty.presentation.screens.locationDetail.LocationDetailFragment
 import com.haberturm.rickandmorty.presentation.screens.locations.LocationsFilterFragment
 import com.haberturm.rickandmorty.presentation.screens.locations.LocationsMainFragment
 import dagger.Module
@@ -38,5 +39,9 @@ interface FragmentBindingModule {
 
     @FragmentScoped
     @ContributesAndroidInjector
-    fun charactersDetailFragment(): CharacterDetailFragment
+    fun characterDetailFragment(): CharacterDetailFragment
+
+    @FragmentScoped
+    @ContributesAndroidInjector
+    fun locationDetailFragment(): LocationDetailFragment
 }

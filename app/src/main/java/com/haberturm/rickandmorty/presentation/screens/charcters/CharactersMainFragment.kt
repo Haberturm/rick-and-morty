@@ -41,10 +41,9 @@ class CharactersMainFragment : DaggerFragment() {
                         val fragment = CharacterDetailFragment()
                         fragment.arguments = arguments
                         replace(R.id.fullscreen_container, fragment)
-                        addToBackStack("CHARACTER_DETAIL_FRAGMENT")
+                        addToBackStack(Const.CHARACTER_DETAIL_FRAGMENT)
                         setReorderingAllowed(true)
                     }
-                    viewModel.showDetails()
                 }
             },
             context = requireContext()

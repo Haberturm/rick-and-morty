@@ -15,4 +15,6 @@
     <string name="page_header_text">Page %1$d out of %2$d</string>
     <string name="origin_template">Origin: %1$s</string>
     <string name="location_template">Location: %1$s</string>
+    <string name="character_details_tittle">Character Details</string>
+    <string name="location_details_tittle">Location Details</string>
 </resources>
