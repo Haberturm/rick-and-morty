@@ -33,6 +33,7 @@ import javax.inject.Inject
 class CharacterDetailFragment : DaggerFragment() {
     private lateinit var episodesAdapter: EpisodesListAdapter
     private lateinit var navigation: Navigation
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -111,35 +112,55 @@ class CharacterDetailFragment : DaggerFragment() {
                     )
 
                     val originText = getString(R.string.origin_template, state.data.originName)
-                    binding.origin.setLinkText(
-                        string = originText,
-                        actionOnClick = {
-                            navigation.replaceFragment(
-                                containerId = R.id.fullscreen_container,
-                                fragment = LocationDetailFragment(),
-                                arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , state.data.originId)},
-                                addToBackStack = Const.LOCATION_DETAIL_FRAGMENT
-                            )
-                        },
-                        linkStartPosition = Util.getNewWordPosition(originText),
-                        linkEndPosition = originText.length
-                    )
+                    if(state.data.originId != -1) { //значит, что локация не unknown
+                        binding.origin.setLinkText(
+                            string = originText,
+                            actionOnClick = {
+                                navigation.replaceFragment(
+                                    containerId = R.id.fullscreen_container,
+                                    fragment = LocationDetailFragment(),
+                                    arguments = Bundle().apply {
+                                        putInt(
+                                            Const.DETAIL_ID_ARG_KEY,
+                                            state.data.originId
+                                        )
+                                    },
+                                    addToBackStack = Const.LOCATION_DETAIL_FRAGMENT
+                                )
+                            },
+                            linkStartPosition = Util.getNewWordPosition(originText),
+                            linkEndPosition = originText.length
+                        )
+                    }else{
+                        binding.origin.text = originText
+                    }
+
 
                     val locationText =
                         getString(R.string.location_template, state.data.locationName)
-                    binding.location.setLinkText(
-                        string = locationText,
-                        actionOnClick = {
-                            navigation.replaceFragment(
-                                containerId = R.id.fullscreen_container,
-                                fragment = LocationDetailFragment(),
-                                arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , state.data.locationId)},
-                                addToBackStack = Const.LOCATION_DETAIL_FRAGMENT
-                            )
-                        },
-                        linkStartPosition = Util.getNewWordPosition(locationText),
-                        linkEndPosition = locationText.length
-                    )
+                    if (state.data.locationId != -1) {//значит, что локация не unknown
+                        binding.location.setLinkText(
+                            string = locationText,
+                            actionOnClick = {
+                                navigation.replaceFragment(
+                                    containerId = R.id.fullscreen_container,
+                                    fragment = LocationDetailFragment(),
+                                    arguments = Bundle().apply {
+                                        putInt(
+                                            Const.DETAIL_ID_ARG_KEY,
+                                            state.data.locationId
+                                        )
+                                    },
+                                    addToBackStack = Const.LOCATION_DETAIL_FRAGMENT
+                                )
+                            },
+                            linkStartPosition = Util.getNewWordPosition(locationText),
+                            linkEndPosition = locationText.length
+                        )
+                    } else {
+                        binding.location.text = locationText
+                    }
+
                 }
             }
         }
