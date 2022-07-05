@@ -1,6 +1,8 @@
 package com.haberturm.rickandmorty.data.mappers.episodes
 
 import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResponseData
+import com.haberturm.rickandmorty.data.entities.episodes.EpisodesResultsData
+import com.haberturm.rickandmorty.data.entities.locations.LocationResultsData
 import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
 import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesInfo
@@ -17,14 +19,19 @@ class EpisodesDataMapper : DataMapper() {
             )
         }
         val episodesData = (data as EpisodesResponseData)
+        val info = if (episodesData.info != null) {
+            EpisodesInfo(
+                count = episodesData.info!!.count,
+                pages = episodesData.info!!.pages,
+                next = episodesData.info!!.next,
+                prev = episodesData.info!!.prev
+            )
+        } else {
+            null
+        }
         return Episodes(
-            info = EpisodesInfo(
-                count = episodesData.info.count,
-                pages = episodesData.info.pages,
-                next = episodesData.info.next,
-                prev = episodesData.info.prev
-            ),
-            results = episodesData.results.map{ episodesResult ->
+            info = info,
+            results = episodesData.results.map { episodesResult ->
                 EpisodesResults(
                     id = episodesResult.id,
                     name = episodesResult.name,
@@ -35,6 +42,25 @@ class EpisodesDataMapper : DataMapper() {
                     created = episodesResult.created
                 )
             } as ArrayList<EpisodesResults>
+        ) as D
+    }
+
+    override fun <T, D> fromDataToDomainSingle(data: T): D {
+        if (data !is EpisodesResultsData) {
+            Util.throwIllegalArgumentException(
+                source = "${this::class.qualifiedName}",
+                message = "data must be type EpisodesResultsData"
+            )
+        }
+        val episodeData = data as EpisodesResultsData
+        return EpisodesResults(
+            id = episodeData.id,
+            name = episodeData.name,
+            airDate = episodeData.airDate,
+            episode = episodeData.episode,
+            characters = episodeData.characters,
+            url = episodeData.url,
+            created = episodeData.created
         ) as D
     }
 }

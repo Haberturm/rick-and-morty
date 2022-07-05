@@ -18,11 +18,15 @@ import com.haberturm.rickandmorty.data.mappers.episodes.EpisodesDataMapper
 import com.haberturm.rickandmorty.data.mappers.locations.LocationsDataMapper
 import com.haberturm.rickandmorty.domain.common.ApiState
 import com.haberturm.rickandmorty.domain.common.AppException
+import com.haberturm.rickandmorty.domain.entities.characters.CharacterResults
 import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
+import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesResults
+import com.haberturm.rickandmorty.domain.entities.locations.LocationResults
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.util.Const
+import com.haberturm.rickandmorty.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -35,7 +39,7 @@ class RepositoryImpl @Inject constructor(
     private val database: RickAndMortyDatabase
 ) : Repository {
 
-    override suspend fun updateCharacters(page: Int): Flow<ApiState<Unit>> = flow {
+    override fun updateCharacters(page: Int): Flow<ApiState<Unit>> = flow {
         emit(
             updateState(
                 remoteDataSource = { RetrofitClient.retrofit.getCharacters(page) },
@@ -49,20 +53,21 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-
-    override suspend fun getCharacters(page: Int): Flow<ApiState<Characters>> = flow {
+    override fun getCharacters(page: Int): Flow<ApiState<Characters>> = flow {
         val upperBound = page * Const.ITEMS_PER_PAGE
         val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Characters, List<CharacterResultsData>, CharactersInfoData>(
                 mapper = CharactersDataMapper(),
-                localDataSource = { database.characterDao().getCharactersInRange(lowerBound, upperBound) },
+                localDataSource = {
+                    database.characterDao().getCharactersInRange(lowerBound, upperBound)
+                },
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
             )
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getFilteredCharacters(
+    override fun getFilteredCharacters(
         name: String,
         status: String,
         species: String,
@@ -86,7 +91,56 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun updateLocations(page: Int): Flow<ApiState<Unit>> = flow {
+    override fun updateSingleCharacter(id: Int): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getSingleCharacter(id) },
+                insertDataInDB = fun(data: ArrayList<CharacterResultsData>) {
+                    database.characterDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(_: Unit) {
+                    Unit
+                },
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun getSingleCharacter(id: Int): Flow<ApiState<CharacterResults>> =
+        flow<ApiState<CharacterResults>> {
+            emit(
+                dataState(
+                    mapper = CharactersDataMapper(),
+                    localDataSource = { database.characterDao().getCharacterById(id) },
+                    localDataInfoSource = {}
+                )
+            )
+        }.flowOn(Dispatchers.IO)
+
+    override fun updateCharactersByIdList(ids: List<Int>): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
+        val idsPath = ids.toString()
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getCharactersByIds(idsPath) },
+                insertDataInDB = fun(data: ArrayList<CharacterResultsData>) {
+                    database.characterDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(_: Unit) {
+                    Unit
+                }
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun getCharactersByIdList(ids: List<Int>): Flow<ApiState<Characters>> = flow<ApiState<Characters>> {
+        emit(
+            dataState<Characters, List<CharacterResultsData>, CharactersInfoData?>(
+                mapper = CharactersDataMapper(),
+                localDataSource = { database.characterDao().getCharactersByIdsList(ids) },
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun updateLocations(page: Int): Flow<ApiState<Unit>> = flow {
         emit(
             updateState(
                 remoteDataSource = { RetrofitClient.retrofit.getLocations(page) },
@@ -100,35 +154,64 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getLocations(page: Int): Flow<ApiState<Locations>> = flow {
+    override fun getLocations(page: Int): Flow<ApiState<Locations>> = flow {
         val upperBound = page * Const.ITEMS_PER_PAGE
         val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Locations, List<LocationResultsData>, LocationsInfoData>(
                 mapper = LocationsDataMapper(),
-                localDataSource = { database.locationsDao().getLocationsInRange(lowerBound, upperBound) },
+                localDataSource = {
+                    database.locationsDao().getLocationsInRange(lowerBound, upperBound)
+                },
                 localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
             )
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getFilteredLocations(
+    override fun getFilteredLocations(
         name: String,
         dimension: String,
         type: String
     ): Flow<ApiState<Locations>> = flow {
         emit(dataState<Locations, List<LocationResultsData>, LocationsInfoData>(
             mapper = LocationsDataMapper(),
-            localDataSource = { database.locationsDao().getFilteredLocations(
-                name = name,
-                dimension = dimension,
-                type = type
-            ) },
+            localDataSource = {
+                database.locationsDao().getFilteredLocations(
+                    name = name,
+                    dimension = dimension,
+                    type = type
+                )
+            },
             localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
         ))
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun updateEpisodes(page: Int): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
+    override fun updateSingleLocation(id: Int): Flow<ApiState<Unit>> = flow {
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getSingleLocation(id) },
+                insertDataInDB = fun(data: ArrayList<LocationResultsData>) {
+                    database.locationsDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(_: Unit) {
+                    Unit
+                },
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun getSingleLocation(id: Int): Flow<ApiState<LocationResults>> =
+        flow<ApiState<LocationResults>> {
+            emit(
+                dataState(
+                    mapper = LocationsDataMapper(),
+                    localDataSource = { database.locationsDao().getLocationById(id) },
+                    localDataInfoSource = {}
+                )
+            )
+        }.flowOn(Dispatchers.IO)
+
+    override fun updateEpisodes(page: Int): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
             updateState(
                 remoteDataSource = { RetrofitClient.retrofit.getEpisodes(page) },
@@ -142,35 +225,89 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getEpisodes(page: Int): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
+    override fun getEpisodes(page: Int): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
         val upperBound = page * Const.ITEMS_PER_PAGE
         val lowerBound = upperBound - Const.ITEMS_PER_PAGE + 1
         emit(
             dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
                 mapper = EpisodesDataMapper(),
-                localDataSource = { database.episodesDao().getEpisodesInRange(lowerBound, upperBound) },
+                localDataSource = {
+                    database.episodesDao().getEpisodesInRange(lowerBound, upperBound)
+                },
                 localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
             )
         )
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getFilteredEpisodes(name: String, episodes: String) = flow {
+    override fun getFilteredEpisodes(name: String, episodes: String) = flow {
         emit(
             dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData>(
                 mapper = EpisodesDataMapper(),
-                localDataSource = { database.episodesDao().getFilteredEpisodes(
-                    name = name,
-                    episodes = episodes
-                ) },
+                localDataSource = {
+                    database.episodesDao().getFilteredEpisodes(
+                        name = name,
+                        episodes = episodes
+                    )
+                },
                 localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
             )
         )
     }.flowOn(Dispatchers.IO)
+
+    override fun updateEpisodesByIdList(ids: List<Int>): Flow<ApiState<Unit>> =
+        flow<ApiState<Unit>> {
+            val idsPath = ids.toString()
+            emit(
+                updateState(
+                    remoteDataSource = { RetrofitClient.retrofit.getEpisodesByIds(idsPath) },
+                    insertDataInDB = fun(data: ArrayList<EpisodesResultsData>) {
+                        database.episodesDao().insertAll(data)
+                    },
+                    insertInfoDataInDB = fun(_: Unit) {
+                        Unit
+                    }
+                )
+            )
+        }.flowOn(Dispatchers.IO)
+
+    override fun getEpisodesByIdList(ids: List<Int>) = flow {
+        emit(
+            dataState<Episodes, List<EpisodesResultsData>, EpisodesInfoData?>(
+                mapper = EpisodesDataMapper(),
+                localDataSource = { database.episodesDao().getEpisodesByIdList(ids) },
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun updateSingleEpisode(id: Int): Flow<ApiState<Unit>> = flow {
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getSingleEpisode(id) },
+                insertDataInDB = fun(data: ArrayList<EpisodesResultsData>) {
+                    database.episodesDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(_: Unit) {
+                    Unit
+                },
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun getSingleEpisode(id: Int): Flow<ApiState<EpisodesResults>> = flow<ApiState<EpisodesResults>> {
+        emit(
+            dataState(
+                mapper = EpisodesDataMapper(),
+                localDataSource = { database.episodesDao().getEpisodeById(id) },
+                localDataInfoSource = {}
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
 
     private suspend fun <D, T1, T2> updateState(
         remoteDataSource: suspend () -> Response<D>,
         insertDataInDB: (T1) -> Unit,
-        insertInfoDataInDB: (T2) -> Unit,
+        insertInfoDataInDB: ((T2) -> Unit)? = null,
     ): ApiState<Unit> {
         try {
             val response = remoteDataSource()
@@ -179,15 +316,58 @@ class RepositoryImpl @Inject constructor(
                 when (data) { //need for smart cast (да-да, получилось немного костыльно:( )
                     is CharactersResponseData -> {
                         insertDataInDB(data.results as T1)
-                        insertInfoDataInDB(data.info as T2)
+                        if (insertInfoDataInDB != null) {
+                            insertInfoDataInDB(data.info as T2)
+                        }
                     }
                     is LocationsResponseData -> {
                         insertDataInDB(data.results as T1)
-                        insertInfoDataInDB(data.info as T2)
+                        if (insertInfoDataInDB != null) {
+                            insertInfoDataInDB(data.info as T2)
+                        }
                     }
                     is EpisodesResponseData -> {
                         insertDataInDB(data.results as T1)
-                        insertInfoDataInDB(data.info as T2)
+                        if (insertInfoDataInDB != null) {
+                            insertInfoDataInDB(data.info as T2)
+                        }
+                    }
+                    is CharacterResultsData -> {
+                        val data2insert = arrayListOf<CharacterResultsData>(data)
+                        insertDataInDB(data2insert as T1)
+                    }
+                    is LocationResultsData -> {
+                        val data2insert = arrayListOf<LocationResultsData>(data)
+                        insertDataInDB(data2insert as T1)
+                    }
+                    is EpisodesResultsData -> {
+                        val data2insert = arrayListOf<EpisodesResultsData>(data)
+                        insertDataInDB(data2insert as T1)
+                    }
+                    is List<*> -> {
+                        try {
+                            when (data[0]) {
+                                is EpisodesResultsData -> {
+                                    insertDataInDB(data as T1)
+                                }
+                                is CharacterResultsData -> {
+                                    insertDataInDB(data as T1)
+                                }
+                                is LocationResultsData -> {
+                                    insertDataInDB(data as T1)
+                                }
+                            }
+                        } catch (e: Exception) {
+                            return ApiState.Error(
+                                AppException.UnknownException(e.message.toString())
+                            )
+                        }
+                    }
+                    else -> {
+                        Util.throwIllegalArgumentException(
+                            source = "updateState func in ${this::class.qualifiedName}",
+                            message = "WRONG TYPE IN updateState (probably you forgot add new type)"
+                        )
                     }
                 }
                 return ApiState.Success(Unit)
@@ -210,16 +390,19 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    /*Функция мапит данные из бд в нужный тип. И оборачивает в нужное состояние.
+    Да, по итогу получилось слишком громоздко. Но если забыть добавить новый тип, то выстрелит IllegalArgException, что
+    хотябы добовляет безопасности(да-да в рантайме:( )*/
     private inline fun <reified R, R1, R2> dataState(
         mapper: DataMapper,
         localDataSource: () -> R1,
-        localDataInfoSource: () -> R2,
+        noinline localDataInfoSource: (() -> R2)? = null,
     ): ApiState<R> {
         try {
             when (R::class) {
                 Characters::class -> {
                     val data2return = CharactersResponseData(
-                        info = localDataInfoSource() as CharactersInfoData,
+                        info = if (localDataInfoSource != null) localDataInfoSource() as CharactersInfoData else null,
                         results = localDataSource() as ArrayList<CharacterResultsData>
                     )
                     return ApiState.Success(
@@ -228,7 +411,7 @@ class RepositoryImpl @Inject constructor(
                 }
                 Locations::class -> {
                     val data2return = LocationsResponseData(
-                        info = localDataInfoSource() as LocationsInfoData,
+                        info = if (localDataInfoSource != null) localDataInfoSource() as LocationsInfoData else null,
                         results = localDataSource() as ArrayList<LocationResultsData>
                     )
                     return ApiState.Success(
@@ -237,16 +420,35 @@ class RepositoryImpl @Inject constructor(
                 }
                 Episodes::class -> {
                     val data2return = EpisodesResponseData(
-                        info = localDataInfoSource() as EpisodesInfoData,
+                        info = if (localDataInfoSource != null) localDataInfoSource() as EpisodesInfoData else null,
                         results = localDataSource() as ArrayList<EpisodesResultsData>
                     )
                     return ApiState.Success(
                         data = mapper.fromDataToDomain(data2return)
                     )
                 }
+                CharacterResults::class -> {
+                    val data2return = localDataSource() as CharacterResultsData
+                    return ApiState.Success(
+                        data = mapper.fromDataToDomainSingle(data2return)
+                    )
+                }
+                LocationResults::class -> {
+                    val data2return = localDataSource() as LocationResultsData
+                    return ApiState.Success(
+                        data = mapper.fromDataToDomainSingle(data2return)
+                    )
+                }
+                EpisodesResults::class -> {
+                    val data2return = localDataSource() as EpisodesResultsData
+                    return ApiState.Success(
+                        data = mapper.fromDataToDomainSingle(data2return)
+                    )
+                }
                 else -> {
-                    return ApiState.Error(
-                        AppException.UnknownException("WRONG TYPE IN dataState")
+                    Util.throwIllegalArgumentException(
+                        source = "dataState func in ${this::class.qualifiedName}",
+                        message = "WRONG TYPE IN dataState (probably you forgot add new type)"
                     )
                 }
             }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
@@ -16,13 +17,17 @@ import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
+import com.haberturm.rickandmorty.presentation.navigation.Navigation
+import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
+import com.haberturm.rickandmorty.presentation.screens.locationDetail.LocationDetailFragment
+import com.haberturm.rickandmorty.util.Const
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 class LocationsMainFragment : DaggerFragment() {
     private lateinit var locationsAdapter: LocationListAdapter
-
+    private lateinit var navigation: Navigation
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -34,15 +39,20 @@ class LocationsMainFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navigation = Navigation(parentFragmentManager)
         locationsAdapter = LocationListAdapter(
             listener = object : LocationListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
-                    viewModel.showDetails()
+                    navigation.replaceFragment(
+                        containerId = R.id.fullscreen_container,
+                        fragment = LocationDetailFragment(),
+                        arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , id)},
+                        addToBackStack = Const.LOCATION_DETAIL_FRAGMENT
+                    )
                 }
             },
             context = requireContext()
         )
-        //viewModel.getData()
     }
 
     override fun onCreateView(

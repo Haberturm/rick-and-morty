@@ -1,7 +1,10 @@
 package com.haberturm.rickandmorty.data.mappers.locations
 
+import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
+import com.haberturm.rickandmorty.data.entities.locations.LocationResultsData
 import com.haberturm.rickandmorty.data.entities.locations.LocationsResponseData
 import com.haberturm.rickandmorty.data.mappers.DataMapper
+import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesInfo
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.entities.locations.LocationResults
 import com.haberturm.rickandmorty.domain.entities.locations.LocationsInfo
@@ -17,8 +20,18 @@ class LocationsDataMapper : DataMapper() {
             )
         }
         val locationsData = (data as LocationsResponseData)
+        val info = if (locationsData.info != null) {
+            LocationsInfo(
+                count = locationsData.info!!.count,
+                pages = locationsData.info!!.pages,
+                next = locationsData.info!!.next,
+                prev = locationsData.info!!.prev
+            )
+        } else {
+            null
+        }
         return Locations(
-            results = locationsData.results.map{ resultsData ->
+            results = locationsData.results.map { resultsData ->
                 LocationResults(
                     id = resultsData.id,
                     name = resultsData.name,
@@ -29,12 +42,27 @@ class LocationsDataMapper : DataMapper() {
                     created = resultsData.created
                 )
             } as ArrayList<LocationResults>,
-            info = LocationsInfo(
-                count = locationsData.info.count,
-                pages = locationsData.info.pages,
-                next = locationsData.info.next,
-                prev = locationsData.info.prev
+            info = info
+        ) as D
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T, D> fromDataToDomainSingle(data: T): D {
+        if (data !is LocationResultsData) {
+            Util.throwIllegalArgumentException(
+                source = "${this::class.qualifiedName}",
+                message = "data must be type LocationResultsData"
             )
+        }
+        val locationData = data as LocationResultsData
+        return LocationResults(
+            id = locationData.id,
+            name = locationData.name,
+            type = locationData.type,
+            dimension = locationData.dimension,
+            residents = locationData.residents,
+            url = locationData.url,
+            created = locationData.url
         ) as D
     }
 }

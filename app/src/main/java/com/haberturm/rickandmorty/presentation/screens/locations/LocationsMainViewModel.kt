@@ -110,7 +110,7 @@ class LocationsMainViewModel @Inject constructor(
                                                 )
                                             )
                                         )
-                                        _maxPages.value = data.data.info.pages
+                                        _maxPages.value = data.data.info?.pages
                                     }
                                 }
                                 is ApiState.Error -> {
@@ -249,9 +249,5 @@ class LocationsMainViewModel @Inject constructor(
         } catch (e: Exception) {
             _jumpToPageEditState.value = true
         }
-    }
-
-    fun showDetails() {
-
     }
 }

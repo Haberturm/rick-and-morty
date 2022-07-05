@@ -1,39 +1,27 @@
 package com.haberturm.rickandmorty.presentation.screens.charcters
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.*
+import androidx.fragment.app.commit
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.haberturm.rickandmorty.R
-import com.haberturm.rickandmorty.databinding.ErrorLayoutBinding
 import com.haberturm.rickandmorty.databinding.FragmentCharactersMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
-import com.haberturm.rickandmorty.domain.common.AppException
-import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
-import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
-import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
-import com.haberturm.rickandmorty.presentation.entities.CharacterUi
-import com.haberturm.rickandmorty.presentation.entities.LocationUi
-import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesListAdapter
-import com.haberturm.rickandmorty.presentation.screens.locations.LocationListAdapter
+import com.haberturm.rickandmorty.presentation.navigation.Navigation
+import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
+import com.haberturm.rickandmorty.util.Const
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 class CharactersMainFragment : DaggerFragment() {
     private lateinit var charactersAdapter: CharacterListAdapter
-
+    private lateinit var navigation: Navigation
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -45,10 +33,16 @@ class CharactersMainFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navigation = Navigation(parentFragmentManager)
         charactersAdapter = CharacterListAdapter(
             listener = object : CharacterListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
-                    viewModel.showDetails()
+                    navigation.replaceFragment(
+                        containerId = R.id.fullscreen_container,
+                        fragment = CharacterDetailFragment(),
+                        arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , id)},
+                        addToBackStack = Const.CHARACTER_DETAIL_FRAGMENT
+                    )
                 }
             },
             context = requireContext()

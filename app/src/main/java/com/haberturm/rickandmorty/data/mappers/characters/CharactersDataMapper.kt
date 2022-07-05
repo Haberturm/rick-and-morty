@@ -1,8 +1,10 @@
 package com.haberturm.rickandmorty.data.mappers.characters
 
+import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
 import com.haberturm.rickandmorty.data.entities.characters.CharactersResponseData
 import com.haberturm.rickandmorty.data.mappers.DataMapper
 import com.haberturm.rickandmorty.domain.entities.characters.*
+import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesInfo
 import com.haberturm.rickandmorty.util.Util
 
 class CharactersDataMapper() : DataMapper() {
@@ -15,6 +17,16 @@ class CharactersDataMapper() : DataMapper() {
             )
         }
         val charactersData = (data as CharactersResponseData)
+        val info = if (charactersData.info != null){
+            CharactersInfo(
+                count = charactersData.info!!.charactersCount,
+                pages = charactersData.info!!.charactersPages,
+                next = charactersData.info!!.charactersNext,
+                prev = charactersData.info!!.charactersPrev
+            )
+        }else{
+            null
+        }
         return Characters(
             results = charactersData.results.map { resultsData ->
                 CharacterResults(
@@ -38,12 +50,38 @@ class CharactersDataMapper() : DataMapper() {
                     created = resultsData.created
                 )
             } as ArrayList<CharacterResults>,
-            info = CharactersInfo(
-                count = charactersData.info.charactersCount,
-                pages = charactersData.info.charactersPages,
-                next = charactersData.info.charactersNext,
-                prev = charactersData.info.charactersPrev
+            info = info
+        ) as D
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T,D>fromDataToDomainSingle(data: T): D{
+        if (data !is CharacterResultsData) {
+            Util.throwIllegalArgumentException(
+                source = "${this::class.qualifiedName}",
+                message = "data must be type CharacterResultsData"
             )
+        }
+        val characterData = data as CharacterResultsData
+        return CharacterResults(
+            id = characterData.id,
+            name = characterData.name,
+            status = characterData.status,
+            species = characterData.species,
+            type = characterData.type,
+            gender = characterData.gender,
+            origin = CharacterOrigin(
+                name = characterData.origin.originName,
+                url = characterData.origin.originUrl
+            ),
+            location = CharacterLocation(
+                name = characterData.location.locationName,
+                url = characterData.location.locationUrl
+            ),
+            image = characterData.image,
+            episode = characterData.episode,
+            url = characterData.characterUrl,
+            created = characterData.created
         ) as D
     }
 }

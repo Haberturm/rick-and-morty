@@ -18,6 +18,9 @@ interface LocationsDao {
     @Query("SELECT * FROM locations WHERE id >= :lowerBound AND id <= :upperBound")
     fun getLocationsInRange(lowerBound: Int, upperBound: Int): List<LocationResultsData>
 
+    @Query("SELECT * FROM locations WHERE id = :id")
+    fun getLocationById(id: Int): LocationResultsData
+
     @Query("SELECT * FROM locations WHERE " +
             "name LIKE '%' || :name || '%' AND " +
             "type LIKE '%' || :type || '%'  AND " +

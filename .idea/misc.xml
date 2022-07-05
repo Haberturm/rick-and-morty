@@ -10,16 +10,21 @@
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/episodes_item.xml" value="0.36666666666666664" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/error_layout.xml" value="0.36666666666666664" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/filter_dropdown_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_character_detail.xml" value="0.1" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_characters_filter.xml" value="0.1" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_characters_main.xml" value="0.1" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_episode_detail.xml" value="0.36666666666666664" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_episodes_filter.xml" value="0.1" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_episodes_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_location_deatil.xml" value="0.5" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_location_detail.xml" value="0.1" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_locations_filter.xml" value="0.1" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/fragment_locations_main.xml" value="0.36666666666666664" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/locations_item.xml" value="0.67" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/page_picker.xml" value="0.33" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.1" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/menu/status_filter_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/menu/top_app_bar.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>

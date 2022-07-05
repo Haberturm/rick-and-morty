@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class LocationsResponseData (
 
-    @SerializedName("info"    ) var info    : LocationsInfoData,
+    @SerializedName("info"    ) var info    : LocationsInfoData?,
     @SerializedName("results" ) var results : ArrayList<LocationResultsData>
 
 )

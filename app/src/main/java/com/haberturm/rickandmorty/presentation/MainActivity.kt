@@ -1,6 +1,8 @@
 package com.haberturm.rickandmorty.presentation
 
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import android.view.MotionEvent
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -16,16 +18,30 @@ import dagger.android.support.DaggerAppCompatActivity
 class MainActivity : DaggerAppCompatActivity() {
     var currentFragmentName: String? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
+
         currentFragmentName = savedInstanceState?.getString(FRAGMENT_KEY)
-        setFragment(getFragmentFromName(currentFragmentName))
+        if (savedInstanceState == null) {
+            setFragment(getFragmentFromName(currentFragmentName))
+        }
         handleBottomNavigation(binding.bottomNavigation)
         setContentView(binding.root)
     }
 
+    override fun onStart() {
+        activityTopAppBarSetUp()
+        super.onStart()
+    }
+
+    override fun onBackPressed() {
+        //означает, что переходим на главный экрвн
+        if (supportFragmentManager.backStackEntryCount == 1){
+            activityTopAppBarSetUp()
+        }
+        super.onBackPressed()
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -45,7 +61,7 @@ class MainActivity : DaggerAppCompatActivity() {
 
     private fun handleBottomNavigation(bottomNavigation: BottomNavigationView) {
         bottomNavigation.setOnItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.characters_menu_item -> {
                     setFragment(CharactersMainFragment())
                     true
@@ -65,16 +81,33 @@ class MainActivity : DaggerAppCompatActivity() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //означает, что переходим на главный экрвн
+        if (supportFragmentManager.backStackEntryCount == 1){
+            activityTopAppBarSetUp()
+        }
+        supportFragmentManager.popBackStack()
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {
             hideKeyboard(this)
         }
         return super.dispatchTouchEvent(ev)
     }
+
+    private fun activityTopAppBarSetUp(){
+        supportActionBar?.apply {
+            title = "Rick and Morty"
+            setDisplayHomeAsUpEnabled(false)
+        }
+    }
 }
 
-fun getNameFromFragment(fragment: Fragment): String?{
-    return when(fragment){
+// UNUSED LOGIC TODO: CLEAR IT
+fun getNameFromFragment(fragment: Fragment): String? {
+    return when (fragment) {
         is CharactersMainFragment -> NavigationDestinations.CharactersMain.name
         is EpisodesMainFragment -> NavigationDestinations.EpisodesMain.name
         is LocationsMainFragment -> NavigationDestinations.LocationsMain.name
@@ -86,7 +119,7 @@ fun getNameFromFragment(fragment: Fragment): String?{
 
 
 fun getFragmentFromName(name: String?): Fragment {
-    return when(name){
+    return when (name) {
         NavigationDestinations.CharactersMain.name -> {
             CharactersMainFragment()
         }
@@ -105,13 +138,15 @@ fun getFragmentFromName(name: String?): Fragment {
     }
 }
 
-sealed class NavigationDestinations{
+sealed class NavigationDestinations {
     object CharactersMain : NavigationDestinations() {
         const val name = "CHARACTERS_MAIN"
     }
+
     object LocationsMain : NavigationDestinations() {
         const val name = "LOCATIONS_MAIN"
     }
+
     object EpisodesMain : NavigationDestinations() {
         const val name = "EPISODES_MAIN"
     }
