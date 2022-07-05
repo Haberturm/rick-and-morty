@@ -16,13 +16,17 @@ import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
+import com.haberturm.rickandmorty.presentation.navigation.Navigation
+import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
+import com.haberturm.rickandmorty.presentation.screens.episodeDetail.EpisodeDetailFragment
+import com.haberturm.rickandmorty.util.Const
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 class EpisodesMainFragment : DaggerFragment() {
     private lateinit var episodesAdapter: EpisodesListAdapter
-
+    private lateinit var navigation: Navigation
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -34,10 +38,16 @@ class EpisodesMainFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navigation = Navigation(parentFragmentManager)
         episodesAdapter = EpisodesListAdapter(
             listener = object : EpisodesListAdapter.ActionClickListener{
                 override fun showDetail(id: Int) {
-                    viewModel.showDetails()
+                    navigation.replaceFragment(
+                        containerId = R.id.fullscreen_container,
+                        fragment = EpisodeDetailFragment(),
+                        arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , id)},
+                        addToBackStack = Const.EPISODE_DETAIL_FRAGMENT
+                    )
                 }
             },
             context = requireContext()

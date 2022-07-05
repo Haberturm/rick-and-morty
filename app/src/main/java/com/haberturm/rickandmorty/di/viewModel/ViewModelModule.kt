@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailViewModel
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainViewModel
+import com.haberturm.rickandmorty.presentation.screens.episodeDetail.EpisodeDetailViewModel
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesMainViewModel
 import com.haberturm.rickandmorty.presentation.screens.locationDetail.LocationDetailViewModel
 import com.haberturm.rickandmorty.presentation.screens.locations.LocationsMainViewModel
@@ -40,4 +41,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(LocationDetailViewModel::class)
     fun locationDetailViewModel(viewModel: LocationDetailViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EpisodeDetailViewModel::class)
+    fun episodeDetailViewModel(viewModel: EpisodeDetailViewModel): ViewModel
 }

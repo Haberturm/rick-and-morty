@@ -33,17 +33,17 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/location_name"
+                        android:id="@+id/episode_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
-                        tools:text="Citadels of Ricks" />
+                        tools:text="Pilot" />
 
                     <TextView
-                        android:id="@+id/location_additional"
+                        android:id="@+id/episode_additional"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Space station, unknown" />
+                        tools:text="S01E01, December 2, 2013" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
                     android:linksClickable="true"
-                    android:text="Location residents:"
+                    android:text="Characters:"
                     android:textColor="@color/black" />
 
 

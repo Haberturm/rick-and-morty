@@ -4,6 +4,7 @@ import com.haberturm.rickandmorty.domain.common.ApiState
 import com.haberturm.rickandmorty.domain.entities.characters.CharacterResults
 import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
+import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesResults
 import com.haberturm.rickandmorty.domain.entities.locations.LocationResults
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import kotlinx.coroutines.flow.Flow
@@ -41,5 +42,7 @@ interface Repository {
     ): Flow<ApiState<Episodes>>
     fun getEpisodesByIdList(ids: List<Int>): Flow<ApiState<Episodes>>
     fun updateEpisodesByIdList(ids: List<Int>): Flow<ApiState<Unit>>
+    fun updateSingleEpisode(id: Int): Flow<ApiState<Unit>>
+    fun getSingleEpisode(id: Int): Flow<ApiState<EpisodesResults>>
 
 }

@@ -19,6 +19,8 @@ interface EpisodesDao {
     @Query("SELECT * FROM episode WHERE id >= :lowerBound AND id <= :upperBound")
     fun getEpisodesInRange(lowerBound: Int, upperBound: Int): List<EpisodesResultsData>
 
+    @Query("SELECT * FROM episode WHERE id = :id")
+    fun getEpisodeById(id: Int): EpisodesResultsData
 
     @Query("SELECT * FROM episode WHERE id IN (:ids)")
     fun getEpisodesByIdList(ids: List<Int>): List<EpisodesResultsData>

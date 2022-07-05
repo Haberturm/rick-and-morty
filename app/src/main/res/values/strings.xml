@@ -17,4 +17,5 @@
     <string name="location_template">Location: %1$s</string>
     <string name="character_details_tittle">Character Details</string>
     <string name="location_details_tittle">Location Details</string>
+    <string name="episode_details_tittle">Episode Details</string>
 </resources>

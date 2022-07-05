@@ -1,5 +1,6 @@
 package com.haberturm.rickandmorty.data.repositories
 
+import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.db.RickAndMortyDatabase
 import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
@@ -20,6 +21,7 @@ import com.haberturm.rickandmorty.domain.common.AppException
 import com.haberturm.rickandmorty.domain.entities.characters.CharacterResults
 import com.haberturm.rickandmorty.domain.entities.characters.Characters
 import com.haberturm.rickandmorty.domain.entities.episodes.Episodes
+import com.haberturm.rickandmorty.domain.entities.episodes.EpisodesResults
 import com.haberturm.rickandmorty.domain.entities.locations.LocationResults
 import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
@@ -277,6 +279,31 @@ class RepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+    override fun updateSingleEpisode(id: Int): Flow<ApiState<Unit>> = flow {
+        emit(
+            updateState(
+                remoteDataSource = { RetrofitClient.retrofit.getSingleEpisode(id) },
+                insertDataInDB = fun(data: ArrayList<EpisodesResultsData>) {
+                    database.episodesDao().insertAll(data)
+                },
+                insertInfoDataInDB = fun(_: Unit) {
+                    Unit
+                },
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override fun getSingleEpisode(id: Int): Flow<ApiState<EpisodesResults>> = flow<ApiState<EpisodesResults>> {
+        emit(
+            dataState(
+                mapper = EpisodesDataMapper(),
+                localDataSource = { database.episodesDao().getEpisodeById(id) },
+                localDataInfoSource = {}
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+
     private suspend fun <D, T1, T2> updateState(
         remoteDataSource: suspend () -> Response<D>,
         insertDataInDB: (T1) -> Unit,
@@ -313,10 +340,20 @@ class RepositoryImpl @Inject constructor(
                         val data2insert = arrayListOf<LocationResultsData>(data)
                         insertDataInDB(data2insert as T1)
                     }
+                    is EpisodesResultsData -> {
+                        val data2insert = arrayListOf<EpisodesResultsData>(data)
+                        insertDataInDB(data2insert as T1)
+                    }
                     is List<*> -> {
                         try {
                             when (data[0]) {
                                 is EpisodesResultsData -> {
+                                    insertDataInDB(data as T1)
+                                }
+                                is CharacterResultsData -> {
+                                    insertDataInDB(data as T1)
+                                }
+                                is LocationResultsData -> {
                                     insertDataInDB(data as T1)
                                 }
                             }
@@ -398,6 +435,12 @@ class RepositoryImpl @Inject constructor(
                 }
                 LocationResults::class -> {
                     val data2return = localDataSource() as LocationResultsData
+                    return ApiState.Success(
+                        data = mapper.fromDataToDomainSingle(data2return)
+                    )
+                }
+                EpisodesResults::class -> {
+                    val data2return = localDataSource() as EpisodesResultsData
                     return ApiState.Success(
                         data = mapper.fromDataToDomainSingle(data2return)
                     )

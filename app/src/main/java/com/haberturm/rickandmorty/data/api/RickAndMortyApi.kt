@@ -27,6 +27,8 @@ interface RickAndMortyApi {
 
     @GET(AllApi.EPISODES)
     suspend fun getEpisodes(@Query("page") page:Int): Response<EpisodesResponseData>
+    @GET(AllApi.SINGLE_EPISODE)
+    suspend fun getSingleEpisode(@Path("id") id:Int): Response<EpisodesResultsData>
     @GET(AllApi.EPISODES_BY_IDS)
     suspend fun getEpisodesByIds(@Path("ids") ids: String): Response<ArrayList<EpisodesResultsData>>
 }
