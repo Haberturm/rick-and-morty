@@ -65,6 +65,7 @@ class ListFragmentMethods {
         errorRefreshAction: () -> Unit,
         fragmentManager: FragmentManager,
         recyclerViewAdapter: RecyclerView.Adapter<VH>,
+        getString: ((Int) -> String)? = null
     ) {
         state.observe(lifecycleOwner, Observer { state ->
             if (state != null) {
@@ -76,13 +77,30 @@ class ListFragmentMethods {
                     }
                     is UiState.Error -> {
                         loadingIndicator.visibility = View.GONE
-                        if (state.exception is AppException.NoInternetConnectionException) {
-                            val alertDialogFragment = AlertDialogFragment()
-                            alertDialogFragment.show(fragmentManager, "NO_INTERNET")
-                        } else {
-                            errorView.root.visibility = View.VISIBLE
-                            errorView.errorRefreshButton.setOnClickListener {
-                                errorRefreshAction()
+                        when(state.exception){
+                            is AppException.NoInternetConnectionException -> {
+                                val alertDialogFragment = AlertDialogFragment()
+                                alertDialogFragment.show(fragmentManager, "NO_INTERNET")
+                            }
+                            is AppException.NoFilteredData -> {
+                                if (getString != null) {
+                                    errorView.errorText.text = getString(R.string.empty_filter_data_error_text)
+                                }
+                                errorView.errorRefreshButton.visibility = View.GONE
+                                errorView.root.visibility = View.VISIBLE
+                                errorView.errorRefreshButton.setOnClickListener {
+                                    errorRefreshAction()
+                                }
+                            }
+                            else -> {
+                                if (getString != null) {
+                                    errorView.errorText.text = getString(R.string.unknown_error_text)
+                                }
+                                errorView.errorRefreshButton.visibility = View.VISIBLE
+                                errorView.root.visibility = View.VISIBLE
+                                errorView.errorRefreshButton.setOnClickListener {
+                                    errorRefreshAction()
+                                }
                             }
                         }
                     }

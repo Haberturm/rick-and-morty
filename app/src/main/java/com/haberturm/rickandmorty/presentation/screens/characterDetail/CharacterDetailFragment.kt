@@ -1,14 +1,10 @@
 package com.haberturm.rickandmorty.presentation.screens.characterDetail
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.haberturm.rickandmorty.R
@@ -20,7 +16,6 @@ import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
 import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.MarginDecorator
 import com.haberturm.rickandmorty.presentation.navigation.Navigation
-import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainFragment
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesListAdapter
 import com.haberturm.rickandmorty.presentation.screens.locationDetail.LocationDetailFragment
 import com.haberturm.rickandmorty.util.Const

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
@@ -110,6 +109,9 @@ class CharactersMainFragment : DaggerFragment() {
             errorView = binding.error,
             errorRefreshAction = { viewModel.getData() },
             fragmentManager = parentFragmentManager,
+            getString = fun(id: Int): String {
+                return getString(id)
+            }
         )
 
         return binding.root

@@ -3,8 +3,8 @@
     <string name="location_additional_template">%1$s, %2$s</string>
     <string name="character_additional_template">%1$s, %2$s, %3$s</string>
     <string name="episode_additional_template">%1$s, %2$s</string>
-    <string name="unknown_error_text">Что то пошло не так... Обновите страницу</string>
-    <string name="refresh_button_text">Обновить</string>
+    <string name="unknown_error_text">Something went wrong… Try to refresh</string>
+    <string name="refresh_button_text">Refresh</string>
     <string name="close_filters_button_text">Close Filters</string>
     <string name="apply_filters_button_text">Apply filters</string>
     <string name="clear_filters_button_text">Clear filters</string>
@@ -18,4 +18,5 @@
     <string name="character_details_tittle">Character Details</string>
     <string name="location_details_tittle">Location Details</string>
     <string name="episode_details_tittle">Episode Details</string>
+    <string name="empty_filter_data_error_text">No data found. Try changing the filter options</string>
 </resources>
