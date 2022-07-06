@@ -19,6 +19,7 @@ class MainActivity : DaggerAppCompatActivity() {
     var currentFragmentName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_RickAndMorty)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
 

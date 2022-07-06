@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/drawable/circle.xml" value="0.2225" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/drawable/ic_launcher_background.xml" value="0.255" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/drawable/splash_screen.xml" value="0.255" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/characters_item.xml" value="0.67" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/layout/charcters_item.xml" value="0.75" />
@@ -25,6 +27,7 @@
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.1" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/menu/status_filter_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/menu/top_app_bar.xml" value="0.36666666666666664" />
+        <entry key="..\:/android/aston_internship/rickAndMorty/rickAndMorty/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.255" />
       </map>
     </option>
   </component>
