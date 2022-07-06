@@ -19,7 +19,7 @@ interface LocationsDao {
     fun getLocationsInRange(lowerBound: Int, upperBound: Int): List<LocationResultsData>
 
     @Query("SELECT * FROM locations WHERE id = :id")
-    fun getLocationById(id: Int): LocationResultsData
+    fun getLocationById(id: Int): LocationResultsData?
 
     @Query("SELECT * FROM locations WHERE " +
             "name LIKE '%' || :name || '%' AND " +
