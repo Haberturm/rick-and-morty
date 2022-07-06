@@ -27,6 +27,7 @@ import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.util.Const
 import com.haberturm.rickandmorty.util.Util
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -36,10 +37,12 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
-    private val database: RickAndMortyDatabase
+    private val database: RickAndMortyDatabase,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : Repository {
 
     override fun updateCharacters(page: Int): Flow<ApiState<Unit>> = flow {
+        Log.i("WTF", "${database.episodesDao().getEpisodeById(999)}")
         emit(
             updateState(
                 remoteDataSource = { RetrofitClient.retrofit.getCharacters(page) },
@@ -291,7 +294,7 @@ class RepositoryImpl @Inject constructor(
                 },
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getSingleEpisode(id: Int): Flow<ApiState<EpisodesResults>> = flow<ApiState<EpisodesResults>> {
         emit(
@@ -301,7 +304,7 @@ class RepositoryImpl @Inject constructor(
                 localDataInfoSource = {}
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
 
     private suspend fun <D, T1, T2> updateState(
