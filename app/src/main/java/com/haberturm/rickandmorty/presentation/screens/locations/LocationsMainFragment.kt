@@ -109,6 +109,9 @@ class LocationsMainFragment : DaggerFragment() {
             errorView = binding.error,
             errorRefreshAction = { viewModel.getData() },
             fragmentManager = parentFragmentManager,
+            getString = fun(id: Int): String {
+                return getString(id)
+            }
         )
 
         return binding.root

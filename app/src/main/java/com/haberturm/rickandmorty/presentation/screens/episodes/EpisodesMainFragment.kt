@@ -46,7 +46,6 @@ class EpisodesMainFragment : DaggerFragment() {
             },
             context = requireContext()
         )
-        viewModel.getData()
     }
 
     override fun onCreateView(
@@ -104,6 +103,9 @@ class EpisodesMainFragment : DaggerFragment() {
             errorView = binding.error,
             errorRefreshAction = {viewModel.getData()},
             fragmentManager = parentFragmentManager,
+            getString = fun(id: Int): String {
+                return getString(id)
+            }
         )
 
         return binding.root

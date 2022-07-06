@@ -64,6 +64,10 @@ class EpisodesMainViewModel @Inject constructor(
 
     private var filtersApplied = false
 
+    init {
+        getData()
+    }
+
     fun getData() {
         val page = currentPage.value!!
         _uiState.value = UiState.Loading
