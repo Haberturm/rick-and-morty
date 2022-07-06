@@ -157,7 +157,6 @@ class CharactersMainViewModel @Inject constructor(
             ).onEach { data ->
                 when (data) {
                     is ApiState.Success<Characters> -> {
-                        Log.i("EMPTYDATA", "${data.data}")
                         if (data.data.results.isEmpty()) {
                             _uiState.postValue(UiState.Error(AppException.NoFilteredData("no filtered data")))
                         } else {
@@ -215,9 +214,23 @@ class CharactersMainViewModel @Inject constructor(
     }
 
     fun applyFilters() {
-        filtersApplied = true
-        _currentPage.value = 1
-        getFilteredData()
+        //для случаев когд отчистили фильтр и нажали "apply filters"
+        if (
+            currentPage.value == 1 &&
+            genderPosition.value == 0 &&
+            statusPosition.value == 0 &&
+            nameText.value == "" &&
+            speciesText.value == "" &&
+            typeText.value == ""
+        ) {
+            filtersApplied = false
+            getData()
+        }else{
+            filtersApplied = true
+            _currentPage.value = 1
+            getFilteredData()
+        }
+
     }
 
     fun clearFilters() {

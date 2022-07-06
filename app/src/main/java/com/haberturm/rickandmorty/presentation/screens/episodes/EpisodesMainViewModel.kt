@@ -122,15 +122,19 @@ class EpisodesMainViewModel @Inject constructor(
             ).onEach { data ->
                 when (data) {
                     is ApiState.Success<Episodes> -> {
-                        _uiState.postValue(
-                            UiState.Data(
-                                pageFilteredData(
-                                    EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
-                                        data.data
+                        if (data.data.results.isEmpty()) {
+                            _uiState.postValue(UiState.Error(AppException.NoFilteredData("no filtered data")))
+                        }else{
+                            _uiState.postValue(
+                                UiState.Data(
+                                    pageFilteredData(
+                                        EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
+                                            data.data
+                                        )
                                     )
                                 )
                             )
-                        )
+                        }
                     }
                     is ApiState.Error -> {
                         Log.e("EXCEPTION", data.exception.toString())
