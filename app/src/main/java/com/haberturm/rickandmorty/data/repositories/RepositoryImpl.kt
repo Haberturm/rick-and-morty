@@ -27,6 +27,7 @@ import com.haberturm.rickandmorty.domain.entities.locations.Locations
 import com.haberturm.rickandmorty.domain.repositories.Repository
 import com.haberturm.rickandmorty.util.Const
 import com.haberturm.rickandmorty.util.Util
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -36,10 +37,12 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
-    private val database: RickAndMortyDatabase
+    private val database: RickAndMortyDatabase,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : Repository {
 
     override fun updateCharacters(page: Int): Flow<ApiState<Unit>> = flow {
+        Log.i("WTF", "${database.episodesDao().getEpisodeById(999)}")
         emit(
             updateState(
                 remoteDataSource = { RetrofitClient.retrofit.getCharacters(page) },
@@ -51,7 +54,7 @@ class RepositoryImpl @Inject constructor(
                 }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getCharacters(page: Int): Flow<ApiState<Characters>> = flow {
         val upperBound = page * Const.ITEMS_PER_PAGE
@@ -65,7 +68,7 @@ class RepositoryImpl @Inject constructor(
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getFilteredCharacters(
         name: String,
@@ -89,7 +92,7 @@ class RepositoryImpl @Inject constructor(
                 localDataInfoSource = { database.characterInfoDao().getCharactersInfo() }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun updateSingleCharacter(id: Int): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
@@ -103,7 +106,7 @@ class RepositoryImpl @Inject constructor(
                 },
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getSingleCharacter(id: Int): Flow<ApiState<CharacterResults>> =
         flow<ApiState<CharacterResults>> {
@@ -114,7 +117,7 @@ class RepositoryImpl @Inject constructor(
                     localDataInfoSource = {}
                 )
             )
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(ioDispatcher)
 
     override fun updateCharactersByIdList(ids: List<Int>): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         val idsPath = ids.toString()
@@ -129,7 +132,7 @@ class RepositoryImpl @Inject constructor(
                 }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getCharactersByIdList(ids: List<Int>): Flow<ApiState<Characters>> = flow<ApiState<Characters>> {
         emit(
@@ -138,7 +141,7 @@ class RepositoryImpl @Inject constructor(
                 localDataSource = { database.characterDao().getCharactersByIdsList(ids) },
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun updateLocations(page: Int): Flow<ApiState<Unit>> = flow {
         emit(
@@ -152,7 +155,7 @@ class RepositoryImpl @Inject constructor(
                 }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getLocations(page: Int): Flow<ApiState<Locations>> = flow {
         val upperBound = page * Const.ITEMS_PER_PAGE
@@ -166,7 +169,7 @@ class RepositoryImpl @Inject constructor(
                 localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getFilteredLocations(
         name: String,
@@ -184,7 +187,7 @@ class RepositoryImpl @Inject constructor(
             },
             localDataInfoSource = { database.locationsInfoDao().getLocationsInfo() }
         ))
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun updateSingleLocation(id: Int): Flow<ApiState<Unit>> = flow {
         emit(
@@ -198,7 +201,7 @@ class RepositoryImpl @Inject constructor(
                 },
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getSingleLocation(id: Int): Flow<ApiState<LocationResults>> =
         flow<ApiState<LocationResults>> {
@@ -209,7 +212,7 @@ class RepositoryImpl @Inject constructor(
                     localDataInfoSource = {}
                 )
             )
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(ioDispatcher)
 
     override fun updateEpisodes(page: Int): Flow<ApiState<Unit>> = flow<ApiState<Unit>> {
         emit(
@@ -223,7 +226,7 @@ class RepositoryImpl @Inject constructor(
                 }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getEpisodes(page: Int): Flow<ApiState<Episodes>> = flow<ApiState<Episodes>> {
         val upperBound = page * Const.ITEMS_PER_PAGE
@@ -237,7 +240,7 @@ class RepositoryImpl @Inject constructor(
                 localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getFilteredEpisodes(name: String, episodes: String) = flow {
         emit(
@@ -252,7 +255,7 @@ class RepositoryImpl @Inject constructor(
                 localDataInfoSource = { database.episodesInfoDao().getEpisodesInfo() }
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun updateEpisodesByIdList(ids: List<Int>): Flow<ApiState<Unit>> =
         flow<ApiState<Unit>> {
@@ -268,7 +271,7 @@ class RepositoryImpl @Inject constructor(
                     }
                 )
             )
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(ioDispatcher)
 
     override fun getEpisodesByIdList(ids: List<Int>) = flow {
         emit(
@@ -277,7 +280,7 @@ class RepositoryImpl @Inject constructor(
                 localDataSource = { database.episodesDao().getEpisodesByIdList(ids) },
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun updateSingleEpisode(id: Int): Flow<ApiState<Unit>> = flow {
         emit(
@@ -291,7 +294,7 @@ class RepositoryImpl @Inject constructor(
                 },
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
     override fun getSingleEpisode(id: Int): Flow<ApiState<EpisodesResults>> = flow<ApiState<EpisodesResults>> {
         emit(
@@ -301,7 +304,7 @@ class RepositoryImpl @Inject constructor(
                 localDataInfoSource = {}
             )
         )
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 
 
     private suspend fun <D, T1, T2> updateState(

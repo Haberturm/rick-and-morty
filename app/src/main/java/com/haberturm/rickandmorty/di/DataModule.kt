@@ -5,7 +5,7 @@ import com.haberturm.rickandmorty.domain.repositories.Repository
 import dagger.Binds
 import dagger.Module
 
-@Module(includes = [DataBaseModule::class])
+@Module(includes = [DataBaseModule::class, CoroutineDispatcherModule::class])
 interface DataModule {
 
     @Binds

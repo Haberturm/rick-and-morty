@@ -19,7 +19,7 @@ interface CharactersDao {
     fun getCharactersInRange(lowerBound: Int, upperBound: Int): List<CharacterResultsData>
 
     @Query("SELECT * FROM character WHERE id = :id")
-    fun getCharacterById(id: Int): CharacterResultsData
+    fun getCharacterById(id: Int): CharacterResultsData?
 
     @Query("SELECT * FROM character WHERE id IN (:ids)")
     fun getCharactersByIdsList(ids: List<Int>): List<CharacterResultsData>
