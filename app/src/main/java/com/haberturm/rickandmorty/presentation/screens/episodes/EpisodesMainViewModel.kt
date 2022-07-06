@@ -64,6 +64,10 @@ class EpisodesMainViewModel @Inject constructor(
 
     private var filtersApplied = false
 
+    init {
+        getData()
+    }
+
     fun getData() {
         val page = currentPage.value!!
         _uiState.value = UiState.Loading
@@ -81,7 +85,7 @@ class EpisodesMainViewModel @Inject constructor(
                             when (data) {
                                 is ApiState.Success<Episodes> -> {
                                     delay(500) // for smooth loading screen
-                                    if (data.data.results.isEmpty()){
+                                    if (data.data.results.isEmpty()) {
                                         Log.e("EXCEPTION", "EMPTY_PAGE")
                                         _uiState.postValue(
                                             UiState.Error(
@@ -90,7 +94,7 @@ class EpisodesMainViewModel @Inject constructor(
                                                 )
                                             )
                                         )
-                                    }else{
+                                    } else {
                                         _uiState.postValue(
                                             UiState.Data(
                                                 EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
@@ -122,15 +126,19 @@ class EpisodesMainViewModel @Inject constructor(
             ).onEach { data ->
                 when (data) {
                     is ApiState.Success<Episodes> -> {
-                        _uiState.postValue(
-                            UiState.Data(
-                                pageFilteredData(
-                                    EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
-                                        data.data
+                        if (data.data.results.isEmpty()) {
+                            _uiState.postValue(UiState.Error(AppException.NoFilteredData("no filtered data")))
+                        } else {
+                            _uiState.postValue(
+                                UiState.Data(
+                                    pageFilteredData(
+                                        EpisodesUiMapper().fromDomainToUi<Episodes, List<EpisodeUi>>(
+                                            data.data
+                                        )
                                     )
                                 )
                             )
-                        )
+                        }
                     }
                     is ApiState.Error -> {
                         Log.e("EXCEPTION", data.exception.toString())
@@ -160,9 +168,18 @@ class EpisodesMainViewModel @Inject constructor(
     }
 
     fun applyFilters() {
-        filtersApplied = true
-        _currentPage.value = 1
-        getFilteredData()
+        if (
+            currentPage.value == 1 &&
+            nameText.value == "" &&
+            episodesText.value == ""
+        ) {
+            filtersApplied = false
+            getData()
+        } else {
+            filtersApplied = true
+            _currentPage.value = 1
+            getFilteredData()
+        }
     }
 
     fun clearFilters() {
@@ -172,16 +189,16 @@ class EpisodesMainViewModel @Inject constructor(
         _episodesText.value = ""
     }
 
-    fun closeFilters(){
-        if (!filtersApplied){
+    fun closeFilters() {
+        if (!filtersApplied) {
             refreshData()
         }
     }
 
     fun refreshData() {
-        if(filtersApplied){
+        if (filtersApplied) {
             getFilteredData()
-        }else{
+        } else {
             getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
         }
     }
@@ -192,9 +209,9 @@ class EpisodesMainViewModel @Inject constructor(
         } else {
             _currentPage.value = currentPage.value?.plus(1)
             _nextPageState.value = false
-            if (filtersApplied){
+            if (filtersApplied) {
                 getFilteredData()
-            }else{
+            } else {
                 getData()
             }
 
@@ -206,9 +223,9 @@ class EpisodesMainViewModel @Inject constructor(
             _previousPageState.value = true
         } else {
             _currentPage.value = currentPage.value?.minus(1)
-            if (filtersApplied){
+            if (filtersApplied) {
                 getFilteredData()
-            }else{
+            } else {
                 getData()
             }
         }
@@ -220,9 +237,9 @@ class EpisodesMainViewModel @Inject constructor(
             if (numberPage in 1.._maxPages.value!!) {
                 _currentPage.value = numberPage
                 _jumpToPageEditState.value = false
-                if (filtersApplied){
+                if (filtersApplied) {
                     getFilteredData()
-                }else{
+                } else {
                     getData()
                 }
             } else {

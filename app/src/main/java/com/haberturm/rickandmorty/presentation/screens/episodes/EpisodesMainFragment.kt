@@ -4,21 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentEpisodesMainBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
-import com.haberturm.rickandmorty.domain.common.AppException
-import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
 import com.haberturm.rickandmorty.presentation.common.ListFragmentMethods
-import com.haberturm.rickandmorty.presentation.common.UiState
 import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecoration
 import com.haberturm.rickandmorty.presentation.navigation.Navigation
-import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
-import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
 import com.haberturm.rickandmorty.presentation.screens.episodeDetail.EpisodeDetailFragment
 import com.haberturm.rickandmorty.util.Const
 import dagger.android.support.DaggerFragment
@@ -52,7 +46,6 @@ class EpisodesMainFragment : DaggerFragment() {
             },
             context = requireContext()
         )
-        viewModel.getData()
     }
 
     override fun onCreateView(
@@ -110,6 +103,9 @@ class EpisodesMainFragment : DaggerFragment() {
             errorView = binding.error,
             errorRefreshAction = {viewModel.getData()},
             fragmentManager = parentFragmentManager,
+            getString = fun(id: Int): String {
+                return getString(id)
+            }
         )
 
         return binding.root

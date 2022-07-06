@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.haberturm.rickandmorty.R
 import com.haberturm.rickandmorty.databinding.FragmentEpisodeDetailBinding
-import com.haberturm.rickandmorty.databinding.FragmentLocationDetailBinding
 import com.haberturm.rickandmorty.di.viewModel.ViewModelFactory
 import com.haberturm.rickandmorty.domain.common.AppException
 import com.haberturm.rickandmorty.presentation.common.AlertDialogFragment
@@ -19,7 +18,6 @@ import com.haberturm.rickandmorty.presentation.decorators.GridSpacingItemDecorat
 import com.haberturm.rickandmorty.presentation.navigation.Navigation
 import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharacterListAdapter
-import com.haberturm.rickandmorty.presentation.screens.locationDetail.LocationDetailViewModel
 import com.haberturm.rickandmorty.util.Const
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject

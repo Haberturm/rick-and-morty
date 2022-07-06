@@ -3,7 +3,7 @@
     <item android:drawable="@color/purple_200"/>
     <item>
         <bitmap
-            android:src="@drawable/r_a_m_logo"
+            android:src="@drawable/rick_and_morty_logo"
             android:gravity="fill_horizontal"
             />
     </item>

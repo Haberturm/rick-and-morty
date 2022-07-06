@@ -8,6 +8,7 @@
     android:visibility="gone"
     >
     <TextView
+        android:id="@+id/error_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/unknown_error_text"

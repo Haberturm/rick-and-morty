@@ -157,15 +157,19 @@ class CharactersMainViewModel @Inject constructor(
             ).onEach { data ->
                 when (data) {
                     is ApiState.Success<Characters> -> {
-                        _uiState.postValue(
-                            UiState.Data(
-                                pageFilteredData(
-                                    CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
-                                        data.data
+                        if (data.data.results.isEmpty()) {
+                            _uiState.postValue(UiState.Error(AppException.NoFilteredData("no filtered data")))
+                        } else {
+                            _uiState.postValue(
+                                UiState.Data(
+                                    pageFilteredData(
+                                        CharactersUiMapper().fromDomainToUi<Characters, List<CharacterUi>>(
+                                            data.data
+                                        )
                                     )
                                 )
                             )
-                        )
+                        }
                     }
                     is ApiState.Error -> {
                         Log.e("EXCEPTION", data.exception.toString())
@@ -210,9 +214,23 @@ class CharactersMainViewModel @Inject constructor(
     }
 
     fun applyFilters() {
-        filtersApplied = true
-        _currentPage.value = 1
-        getFilteredData()
+        //для случаев когд отчистили фильтр и нажали "apply filters"
+        if (
+            currentPage.value == 1 &&
+            genderPosition.value == 0 &&
+            statusPosition.value == 0 &&
+            nameText.value == "" &&
+            speciesText.value == "" &&
+            typeText.value == ""
+        ) {
+            filtersApplied = false
+            getData()
+        }else{
+            filtersApplied = true
+            _currentPage.value = 1
+            getFilteredData()
+        }
+
     }
 
     fun clearFilters() {
@@ -225,16 +243,16 @@ class CharactersMainViewModel @Inject constructor(
         _typeText.value = ""
     }
 
-    fun closeFilters(){
-        if (!filtersApplied){
+    fun closeFilters() {
+        if (!filtersApplied) {
             refreshData()
         }
     }
 
     fun refreshData() {
-        if(filtersApplied){
+        if (filtersApplied) {
             getFilteredData()
-        }else{
+        } else {
             getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
         }
     }
@@ -245,9 +263,9 @@ class CharactersMainViewModel @Inject constructor(
         } else {
             _currentPage.value = currentPage.value?.plus(1)
             _nextPageState.value = false
-            if (filtersApplied){
+            if (filtersApplied) {
                 getFilteredData()
-            }else{
+            } else {
                 getData()
             }
 
@@ -259,9 +277,9 @@ class CharactersMainViewModel @Inject constructor(
             _previousPageState.value = true
         } else {
             _currentPage.value = currentPage.value?.minus(1)
-            if (filtersApplied){
+            if (filtersApplied) {
                 getFilteredData()
-            }else{
+            } else {
                 getData()
             }
         }
@@ -273,9 +291,9 @@ class CharactersMainViewModel @Inject constructor(
             if (numberPage in 1.._maxPages.value!!) {
                 _currentPage.value = numberPage
                 _jumpToPageEditState.value = false
-                if (filtersApplied){
+                if (filtersApplied) {
                     getFilteredData()
-                }else{
+                } else {
                     getData()
                 }
             } else {

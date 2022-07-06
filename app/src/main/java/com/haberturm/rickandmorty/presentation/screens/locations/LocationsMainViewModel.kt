@@ -135,15 +135,20 @@ class LocationsMainViewModel @Inject constructor(
             ).onEach { data ->
                 when (data) {
                     is ApiState.Success<Locations> -> {
-                        _uiState.postValue(
-                            UiState.Data(
-                                pageFilteredData(
-                                    LocationsUiMapper().fromDomainToUi<Locations, List<LocationUi>>(
-                                        data.data
+                        if (data.data.results.isEmpty()) {
+                            _uiState.postValue(UiState.Error(AppException.NoFilteredData("no filtered data")))
+                        } else {
+                            _uiState.postValue(
+                                UiState.Data(
+                                    pageFilteredData(
+                                        LocationsUiMapper().fromDomainToUi<Locations, List<LocationUi>>(
+                                            data.data
+                                        )
                                     )
                                 )
                             )
-                        )
+                        }
+
                     }
                     is ApiState.Error -> {
                         Log.e("EXCEPTION", data.exception.toString())
@@ -177,9 +182,19 @@ class LocationsMainViewModel @Inject constructor(
     }
 
     fun applyFilters() {
-        filtersApplied = true
-        _currentPage.value = 1
-        getFilteredData()
+        if (
+            currentPage.value == 1 &&
+            nameText.value == "" &&
+            dimensionText.value == "" &&
+            typeText.value == ""
+        ) {
+            filtersApplied = false
+            getData()
+        } else {
+            filtersApplied = true
+            _currentPage.value = 1
+            getFilteredData()
+        }
     }
 
     fun clearFilters() {
@@ -190,16 +205,16 @@ class LocationsMainViewModel @Inject constructor(
         _typeText.value = ""
     }
 
-    fun closeFilters(){
-        if (!filtersApplied){
+    fun closeFilters() {
+        if (!filtersApplied) {
             refreshData()
         }
     }
 
     fun refreshData() {
-        if(filtersApplied){
+        if (filtersApplied) {
             getFilteredData()
-        }else{
+        } else {
             getData()  //в нашем случае, не обязательно перезагружать фрагмент, можно просто обновить данные
         }
     }
@@ -210,9 +225,9 @@ class LocationsMainViewModel @Inject constructor(
         } else {
             _currentPage.value = currentPage.value?.plus(1)
             _nextPageState.value = false
-            if (filtersApplied){
+            if (filtersApplied) {
                 getFilteredData()
-            }else{
+            } else {
                 getData()
             }
 
@@ -224,9 +239,9 @@ class LocationsMainViewModel @Inject constructor(
             _previousPageState.value = true
         } else {
             _currentPage.value = currentPage.value?.minus(1)
-            if (filtersApplied){
+            if (filtersApplied) {
                 getFilteredData()
-            }else{
+            } else {
                 getData()
             }
         }
@@ -238,9 +253,9 @@ class LocationsMainViewModel @Inject constructor(
             if (numberPage in 1.._maxPages.value!!) {
                 _currentPage.value = numberPage
                 _jumpToPageEditState.value = false
-                if (filtersApplied){
+                if (filtersApplied) {
                     getFilteredData()
-                }else{
+                } else {
                     getData()
                 }
             } else {
