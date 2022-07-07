@@ -107,7 +107,7 @@ class CharactersMainFragment : DaggerFragment() {
             recyclerViewAdapter = charactersAdapter,
             loadingIndicator = binding.loadingIndicator,
             errorView = binding.error,
-            errorRefreshAction = { viewModel.getData() },
+            errorRefreshAction = { viewModel.refreshData() },
             fragmentManager = parentFragmentManager,
             getString = fun(id: Int): String {
                 return getString(id)
