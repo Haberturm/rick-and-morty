@@ -13,11 +13,13 @@ class Navigation(
     fun replaceFragment(
         containerId: Int,
         fragment: Fragment,
-        arguments: Bundle,
-        addToBackStack: String
+        arguments: Bundle? = null,
+        addToBackStack: String = ""
     ){
         fragmentManager.commit {
-            fragment.arguments = arguments
+            if (arguments != null){
+                fragment.arguments = arguments
+            }
             replace(containerId, fragment)
             if (addToBackStack.isNotEmpty()){
                 addToBackStack(addToBackStack)

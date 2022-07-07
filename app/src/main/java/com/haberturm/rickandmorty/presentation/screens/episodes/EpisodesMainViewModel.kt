@@ -214,8 +214,8 @@ class EpisodesMainViewModel @Inject constructor(
             } else {
                 getData()
             }
-
         }
+        _nextPageState.value = false
     }
 
     fun previousPage() {
@@ -229,6 +229,7 @@ class EpisodesMainViewModel @Inject constructor(
                 getData()
             }
         }
+        _previousPageState.value = false
     }
 
     fun jumpToPage(page: CharSequence) {

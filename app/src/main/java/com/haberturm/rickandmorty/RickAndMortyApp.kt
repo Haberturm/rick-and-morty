@@ -10,10 +10,6 @@ class RickAndMortyApp : DaggerApplication() {
     lateinit var appComponent: AppComponent
         private set
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         appComponent = DaggerAppComponent.builder().application(this).build()
         return appComponent

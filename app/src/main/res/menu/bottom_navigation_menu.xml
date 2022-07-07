@@ -3,13 +3,16 @@
     <item
         android:id="@+id/characters_menu_item"
         android:enabled="true"
-        android:title="Персонажи"/>
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="@string/characters_bottom_nav_item"/>
     <item
         android:id="@+id/locations_menu_item"
         android:enabled="true"
-        android:title="Локации"/>
+        android:icon="@drawable/ic_baseline_location_on_24"
+        android:title="@string/locations_bottom_nav_item"/>
     <item
         android:id="@+id/episodes_menu_item"
         android:enabled="true"
-        android:title="Эпизоды"/>
+        android:icon="@drawable/ic_baseline_local_movies_24"
+        android:title="@string/episodes_bottom_nav_item"/>
 </menu>

@@ -19,4 +19,7 @@
     <string name="location_details_tittle">Location Details</string>
     <string name="episode_details_tittle">Episode Details</string>
     <string name="empty_filter_data_error_text">No data found. Try changing the filter options</string>
+    <string name="characters_bottom_nav_item">Characters</string>
+    <string name="locations_bottom_nav_item">Locations</string>
+    <string name="episodes_bottom_nav_item">Episodes</string>
 </resources>

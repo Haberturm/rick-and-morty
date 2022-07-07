@@ -1,6 +1,7 @@
 package com.haberturm.rickandmorty.presentation.screens.episodes
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class EpisodesMainFragment : DaggerFragment() {
     private lateinit var episodesAdapter: EpisodesListAdapter
     private lateinit var navigation: Navigation
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -34,12 +36,12 @@ class EpisodesMainFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         navigation = Navigation(parentFragmentManager)
         episodesAdapter = EpisodesListAdapter(
-            listener = object : EpisodesListAdapter.ActionClickListener{
+            listener = object : EpisodesListAdapter.ActionClickListener {
                 override fun showDetail(id: Int) {
                     navigation.replaceFragment(
                         containerId = R.id.fullscreen_container,
                         fragment = EpisodeDetailFragment(),
-                        arguments = Bundle().apply {putInt( Const.DETAIL_ID_ARG_KEY , id)},
+                        arguments = Bundle().apply { putInt(Const.DETAIL_ID_ARG_KEY, id) },
                         addToBackStack = Const.EPISODE_DETAIL_FRAGMENT
                     )
                 }
@@ -55,9 +57,10 @@ class EpisodesMainFragment : DaggerFragment() {
     ): View? {
         val binding = FragmentEpisodesMainBinding.inflate(inflater)
 
-        viewModel.currentPage.observe(viewLifecycleOwner){ currentPage ->
-            viewModel.maxPages.observe(viewLifecycleOwner){ maxPages ->
-                binding.pageHeaderText.text = getString(R.string.page_header_text,currentPage, maxPages)
+        viewModel.currentPage.observe(viewLifecycleOwner) { currentPage ->
+            viewModel.maxPages.observe(viewLifecycleOwner) { maxPages ->
+                binding.pageHeaderText.text =
+                    getString(R.string.page_header_text, currentPage, maxPages)
             }
         }
 
@@ -65,7 +68,7 @@ class EpisodesMainFragment : DaggerFragment() {
             pagePicker = binding.pagePicker,
             onNextPage = { viewModel.nextPage() },
             onPreviousPage = { viewModel.previousPage() },
-            jumpToPage = fun(pageText: CharSequence){
+            jumpToPage = fun(pageText: CharSequence) {
                 viewModel.jumpToPage(pageText)
             },
             jumpToPageState = viewModel.jumpToPageEditState,
@@ -77,8 +80,13 @@ class EpisodesMainFragment : DaggerFragment() {
 
         listFragmentMethods.recyclerViewTooling(
             recyclerView = binding.episodesList,
-            manager = GridLayoutManager(requireContext(),2),
-            decorator = GridSpacingItemDecoration(2,resources.getDimensionPixelSize(R.dimen.default_margin) , true, 0),
+            manager = GridLayoutManager(requireContext(), 2),
+            decorator = GridSpacingItemDecoration(
+                2,
+                resources.getDimensionPixelSize(R.dimen.default_margin),
+                true,
+                0
+            ),
             recyclerViewAdapter = episodesAdapter
         )
 
@@ -91,7 +99,7 @@ class EpisodesMainFragment : DaggerFragment() {
 
         listFragmentMethods.swipeToRefreshListener(
             swipeRefreshLayout = binding.swipeRefreshLayout,
-            onRefreshAction = {viewModel.refreshData()}
+            onRefreshAction = { viewModel.refreshData() }
         )
 
         listFragmentMethods.stateObserver(
@@ -101,7 +109,7 @@ class EpisodesMainFragment : DaggerFragment() {
             recyclerViewAdapter = episodesAdapter,
             loadingIndicator = binding.loadingIndicator,
             errorView = binding.error,
-            errorRefreshAction = {viewModel.getData()},
+            errorRefreshAction = { viewModel.refreshData() },
             fragmentManager = parentFragmentManager,
             getString = fun(id: Int): String {
                 return getString(id)
