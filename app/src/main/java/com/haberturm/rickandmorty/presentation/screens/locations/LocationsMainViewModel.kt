@@ -230,8 +230,8 @@ class LocationsMainViewModel @Inject constructor(
             } else {
                 getData()
             }
-
         }
+        _nextPageState.value = false
     }
 
     fun previousPage() {
@@ -245,6 +245,7 @@ class LocationsMainViewModel @Inject constructor(
                 getData()
             }
         }
+        _previousPageState.value = false
     }
 
     fun jumpToPage(page: CharSequence) {
