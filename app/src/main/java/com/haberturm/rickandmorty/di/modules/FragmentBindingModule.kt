@@ -1,5 +1,6 @@
-package com.haberturm.rickandmorty.di
+package com.haberturm.rickandmorty.di.modules
 
+import com.haberturm.rickandmorty.di.FragmentScoped
 import com.haberturm.rickandmorty.presentation.screens.characterDetail.CharacterDetailFragment
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersMainFragment

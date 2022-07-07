@@ -2,10 +2,9 @@ package com.haberturm.rickandmorty.di
 
 import android.app.Application
 import com.haberturm.rickandmorty.RickAndMortyApp
-import com.haberturm.rickandmorty.di.viewModel.ViewModelModule
+import com.haberturm.rickandmorty.di.modules.AppModule
 import dagger.BindsInstance
 import dagger.Component
-import dagger.Module
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule

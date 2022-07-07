@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.di
+package com.haberturm.rickandmorty.di.modules
 
 import com.haberturm.rickandmorty.data.repositories.RepositoryImpl
 import com.haberturm.rickandmorty.domain.repositories.Repository

@@ -1,4 +1,4 @@
-package com.haberturm.rickandmorty.di
+package com.haberturm.rickandmorty.di.modules
 
 import android.content.Context
 import com.haberturm.rickandmorty.data.db.RickAndMortyDatabase
