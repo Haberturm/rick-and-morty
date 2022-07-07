@@ -5,7 +5,6 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -25,7 +24,6 @@ import com.haberturm.rickandmorty.presentation.entities.CharacterUi
 import com.haberturm.rickandmorty.presentation.entities.EpisodeUi
 import com.haberturm.rickandmorty.presentation.entities.LocationUi
 import com.haberturm.rickandmorty.presentation.screens.charcters.CharacterListAdapter
-import com.haberturm.rickandmorty.presentation.screens.charcters.CharactersFilterFragment
 import com.haberturm.rickandmorty.presentation.screens.episodes.EpisodesListAdapter
 import com.haberturm.rickandmorty.presentation.screens.locations.LocationListAdapter
 
@@ -198,7 +196,7 @@ class ListFragmentMethods {
         button.setOnClickListener {
             val ft = navManager.beginTransaction()
             ft.apply {
-                replace(R.id.fragment_container, filterFragment)
+                replace(R.id.container_with_bottom_navigation, filterFragment)
                 addToBackStack(fragmentLabel)
                 commit()
             }
