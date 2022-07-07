@@ -1,6 +1,5 @@
 package com.haberturm.rickandmorty.data.repositories
 
-import android.util.Log
 import com.haberturm.rickandmorty.data.api.RetrofitClient
 import com.haberturm.rickandmorty.data.db.RickAndMortyDatabase
 import com.haberturm.rickandmorty.data.entities.characters.CharacterResultsData
@@ -42,7 +41,6 @@ class RepositoryImpl @Inject constructor(
 ) : Repository {
 
     override fun updateCharacters(page: Int): Flow<ApiState<Unit>> = flow {
-        Log.i("WTF", "${database.episodesDao().getEpisodeById(999)}")
         emit(
             updateState(
                 remoteDataSource = { RetrofitClient.retrofit.getCharacters(page) },

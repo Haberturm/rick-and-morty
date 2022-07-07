@@ -89,7 +89,7 @@ class CharactersMainViewModel @Inject constructor(
     Изначально идет запрос на обновление данных из интернета. Обрабатывется возможная ошибка связанныя с отсутсвием интренета.
     После обработки в ответа от сети, в любом случае отображаются даннные из бд(если они есть)
      */
-    fun getData() {
+    private fun getData() {
         val page = currentPage.value!!
         _uiState.value = UiState.Loading
         viewModelScope.launch {
@@ -145,7 +145,7 @@ class CharactersMainViewModel @Inject constructor(
         }
     }
 
-    fun getFilteredData() {
+    private fun getFilteredData() {
         _uiState.value = UiState.Loading
         viewModelScope.launch {
             repository.getFilteredCharacters(

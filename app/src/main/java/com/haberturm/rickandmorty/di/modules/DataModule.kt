@@ -10,7 +10,7 @@ interface DataModule {
 
     @Binds
     fun bindRepositoryToRepositoryImpl(
-        newsRepositoryImpl: RepositoryImpl
+        repositoryImpl: RepositoryImpl
     ): Repository
 
 }
